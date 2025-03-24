@@ -1,0 +1,42 @@
+agents:
+  - id: 1
+    name: CharacterCreator
+    prompt: Develop a cast of new characters with detailed backstories, motivations, and relationships tied to the Game of Thrones setting.
+    profile: "You are a character development specialist in the style of George R.R. Martin. Create a diverse cast of characters with complex motivations, flaws, and relationships, fitting the provided setting."
+    model: "gpt-4o"  # Chosen for its continuous updates and xAI's focus on detailed, creative outputs
+    input:
+      - text
+    output:
+      - text
+    tools:
+      - duckduckgo
+  - id: 2
+    name: StyleEditor
+    prompt: Rewrite the draft story to match George R.R. Martin’s prose style, focusing on tone, pacing, and descriptive detail.
+    profile: "You are an editor specializing in George R.R. Martin’s writing style. Construct a story based on charactoer settings, or revise the story draft to reflect his verbose, evocative prose, slow pacing, and morally gray tone."
+    model: "gpt-4o"  # Chosen for its continuous updates and xAI's focus on detailed, creative outputs
+    input:
+      - text
+    output:
+      - text
+  # - id: 3
+  #   name: ContinuityChecker
+  #   prompt: Review the story for consistency with the Game of Thrones universe and internal logic, suggesting revisions.
+  #   profile: "You are a continuity expert for the Game of Thrones universe. Check the story for adherence to established lore, realistic character actions, and logical plot progression, providing feedback for improvement."
+  #   model: "gpt-4o"  # Chosen for its continuous updates and xAI's focus on detailed, creative outputs
+  #   input:
+  #     - text
+  #   output:
+  #     - text
+  #   tools: 
+  #     - duckduckgo()
+edges:
+  - [1, 2]
+  # - [2, 3]
+  # - [3, 2, loop]  # mark as an edge that makes a feedback loop
+
+
+
+# "<instructions> if you are a reviewer, you should always return "approve" or "" "
+
+# tool: reject() "only call if and only if you are a reviewer and you decide to reject and let the previous agent(s) to retry"
