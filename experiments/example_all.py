@@ -16,6 +16,9 @@ from mas.message import Message
 # config logging
 logging.basicConfig(level=logging.INFO)
 
+from dotenv import load_dotenv
+load_dotenv()
+
 async def run():
     """
     Example MAS: one-time answering

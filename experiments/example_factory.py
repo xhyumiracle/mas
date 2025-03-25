@@ -11,6 +11,9 @@ from mas.model import MODELS
 
 logging.basicConfig(level=logging.NOTSET)
 
+from dotenv import load_dotenv
+load_dotenv()
+
 mas = MasFactory(
     model_map=MODELS,
     tool_map=TOOLS,
