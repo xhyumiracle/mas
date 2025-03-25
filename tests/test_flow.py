@@ -23,8 +23,8 @@ def test_SimpleChainFlow():
 
 def test_PocketFlowChainFlow():
 
-    tool_pool = ToolPool(tool_map=TOOLS)
-    model_pool = ModelPool(model_map=MODELS)
+    tool_pool = ToolPool(map=TOOLS)
+    model_pool = ModelPool(map=MODELS)
     Agent.set_model_pool(model_pool)
     Agent.set_tool_pool(tool_pool)
 

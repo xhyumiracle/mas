@@ -38,13 +38,13 @@ class Agent(ABC):
     
     @classmethod
     def to_model(cls, model_str) -> Model:
-        return cls.get_model_pool().get_model(model_str)
+        return cls.get_model_pool().get(model_str)
     
     @classmethod
     def to_tools(cls, tool_str_list: List[str]) -> Optional[List[Toolkit]]:
         if tool_str_list is None:
             return None
-        return [cls.get_tool_pool().get_tool(tool_str) for tool_str in tool_str_list]
+        return [cls.get_tool_pool().get(tool_str) for tool_str in tool_str_list]
     
     @abstractmethod
     def run_messages(self, messages: Sequence[Union[Dict, Message]]) -> Message:

@@ -18,14 +18,24 @@ class FlowMemory:
         }
         self.storage.add_entry(entry)
 
-    def get_entries_by_caller(self, caller: NodeId) -> List[Tuple[NodeId, str]]:
-        return self.storage.get_entries_by_caller(caller)
-        # return [(e["callee"], e["action"]) for e in entries]
+    def get_entries_by_caller(self, caller: NodeId, mask: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+        entries = self.storage.get_entries_by_caller(caller)
+        return self.entries_mask(entries, mask)
 
-    def get_entries_by_callee(self, callee: NodeId) -> List[Tuple[NodeId, str]]:
-        return self.storage.get_entries_by_callee(callee)
-        # return [(e["caller"], e["action"]) for e in entries]
+    def get_entries_by_callee(self, callee: NodeId, mask: Optional[List[str]] = None) -> List[Tuple[NodeId, str]]:
+        entries = self.storage.get_entries_by_callee(callee)
+        return self.entries_mask(entries, mask)
 
     def get_data(self, caller: NodeId, callee: NodeId, action: str) -> Optional[Dict[str, Any]]:
         entry = self.storage.get_entry(caller, callee, action)
         return entry["data"] if entry else None
+
+    def entries_mask(self, entries: List[Dict[str, Any]], keys: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+        if keys is None:
+            return entries  # full entry dicts
+
+        # Apply mask
+        return [
+            {k: entry[k] for k in keys if k in entry}
+            for entry in entries
+        ]

@@ -5,15 +5,15 @@
 - setup
 
 ```bash
-pip install -r requirements.txt
-pip install -e .
+$ pip install -r requirements.txt
 ```
 
 - examples
 
 ```bash
-python experiments/example_factory.py
-python experiments/example_all.py
+$ python experiments/example_factory.py
+$ python experiments/example_all.py
+$ pytest
 ```
 
 ## What's in the box
