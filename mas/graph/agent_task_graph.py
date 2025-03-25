@@ -9,8 +9,8 @@ from mas.graph.types import EdgeAttr, NodeAttr, NodeId
 Graph:
 v0: 
 1. DAG, (Multi)DiGraph
-1. each node each out_action: only 1 out_arc
-2. each node each in_action: N>=0 in_arcs
+1. each node out_action: only 1 out_arc
+2. each node in_action: N>=0 in_arcs
 
 v1: 
 1. DCG
