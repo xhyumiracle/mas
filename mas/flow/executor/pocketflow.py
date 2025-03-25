@@ -52,9 +52,7 @@ class PocketflowExecutor(FlowExecutor):
         flow = Flow(start=start_node)
         flow.run(shared)
 
-        last_node = self.execution_chain[-1]
-        last_trace = shared["memory"].get_entries_by_callee(last_node)[-1]
-        return last_trace['data']['caller_output_message']
+        return shared["final_output_message"]
         
 
 class FlowNode(Node):
@@ -116,9 +114,15 @@ class FlowNode(Node):
     def post(self, shared, prep_res, exec_res: Message):
         # set execution
         action = "default"
-        successors = shared["graph"].successors(self.agent.id)
+        successors = list(shared["graph"].successors(self.agent.id))
+        
+        if not any(successors):
+            print('no successors, im the last node, writting results')
+            shared["final_output_message"] = exec_res
+
         for succ in successors:
             shared["memory"].add_entry(caller=self.agent.id, callee=succ, action=action, data={"caller_user_prompt": self.default_prompt, "caller_output_message": exec_res})
+        
         return action
     
     # def condition(self, shared):
