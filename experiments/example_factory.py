@@ -1,3 +1,5 @@
+import logging
+from mas.curator import ModelCurator, ToolCurator
 from mas.mas import MasFactory
 from mas.agent.agno import AgnoAgent
 from mas.agent.mock import MockAgent
@@ -7,14 +9,17 @@ from mas.flow.executor.pocketflow import PocketflowExecutor
 from mas.tool import TOOLS
 from mas.model import MODELS
 
+logging.basicConfig(level=logging.NOTSET)
+
 mas = MasFactory(
-    cls_Orch=MockOrch,
-    cls_Executor=PocketflowExecutor,
-    cls_Agent=MockAgent,
-    cls_Parser=YamlParser,
-    executor_is_chain=True,
     model_map=MODELS,
     tool_map=TOOLS,
+    cls_Orch=MockOrch,
+    cls_Parser=YamlParser, # optional
+    cls_Executor=PocketflowExecutor,
+    cls_Agent=MockAgent,
+    cls_Curators={"model": ModelCurator, "tool": ToolCurator},
+    executor_is_chain=True,
 )
 
 mas.build()
