@@ -1,6 +1,6 @@
 # MAS
 
-## Usage
+## Quick Start
 
 - setup
 
@@ -15,6 +15,80 @@ $ python experiments/example_factory.py
 $ python experiments/example_all.py
 $ pytest
 ```
+
+## Usage
+```python
+import logging
+from mas.mas import MasFactory
+from mas.orch import MockOrch
+from mas.orch.parser import YamlParser
+from mas.curator import ModelCurator, ToolCurator
+from mas.flow import PocketflowExecutor
+from mas.agent import MockAgent, AgnoAgent
+from mas.tool import TOOLS
+from mas.model import MODELS
+
+logging.basicConfig(level=logging.INFO)
+
+from dotenv import load_dotenv
+load_dotenv()
+
+mas = MasFactory(
+    model_map=MODELS,
+    tool_map=TOOLS,
+    cls_Orch=MockOrch,
+    cls_Parser=YamlParser, # optional
+    cls_Executor=PocketflowExecutor,
+    cls_Agent=MockAgent,
+    cls_Curators={"model": ModelCurator, "tool": ToolCurator},
+    executor_is_chain=True,
+)
+
+mas.build()
+mas.run("Write a story in George R.R. Martin's style")
+```
+
+## Introduction
+![MAS framework](assets/arch.png)
+
+MAS is a framework for building autonomous multi-agent systems (MAS).
+
+"The less, the better."
+
+MAS is designed to be modular and extensible, almost all components are pluggable.
+
+**Key features:**
+- Separating *Execution Flow* from *Agent Task Graph*:
+  - allowing flexible control over the execution style
+- Separating *Curation* from *Orchestration*, allowing orchestrator focus on the task graph generation, while curators focus on resolving the specific agent settings
+- Multi-modality:
+  - supporting image, video, audio, file, etc.
+  - supporting modality validation over the graph
+- Shared memory:
+  - the global execution trace is available among all agents
+- Minimum fixed interface:
+  - AgentTaskGraph, AgentTaskFlow, Message, Flow Memory are fixed structure, capturing the minimum yet critical interfaces to modeling the MAS problem.
+  - Others are customizable or modularized, allowing you to leverage any existing frameworks or implement your own.
+
+**Modularized components:**
+- Modularized *Orchestrator*:
+  - you can implement your own orchestrator, with different graph generation strategies
+- Modularized *Flow Executor*: 
+  - you can use any workflow-style framework, e.g. Pocketflow etc.
+  - you can also implement your own executor, e.g. simple chain executor
+- Modularized *Agent*: 
+  - you can use any agent framework, e.g. LangChain, Agno (default) etc.
+- Customizable *Flow Memory Data*:
+  - the flow memory is a map between "(executed) edge" and "data"
+  - "data" is a customizable dict
+- Modularized *Tool* and *Base Model*:
+  - you can implement your own tool and base model, simply by adding to the maps.
+- Modularized *Curator*:
+  - you can implement your own curator, with different curation strategies
+- Modularized *Parser*:
+  - customize it to allow parsing arbitrary LLM orchestrator output format
+- Modularized *Storage*:
+  - you can use any storage to store the flow memory, e.g. InMemoryStorage, RedisStorage, SQLiteStorage etc.
 
 ## What's in the box
 
@@ -45,10 +119,11 @@ $ pytest
 
 ## TODO
 
-- [ ] add more tools
-- [ ] add more models
 - [ ] implement LLM-based orchestrators
-- [ ] improve flow executor to support branching-flow
+- [ ] add enough tools
+- [ ] add enough models
+- [ ] async flow executor to better support branching-flow
 - [ ] test multi-modality
 - [ ] test different storage
 - [ ] support fix-workflow agents?
+- [ ] stream output
