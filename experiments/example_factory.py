@@ -8,7 +8,7 @@ from mas.agent import MockAgent, AgnoAgent
 from mas.tool import TOOLS
 from mas.model import MODELS
 
-logging.basicConfig(level=logging.NOTSET)
+logging.basicConfig(level=logging.INFO)
 
 from dotenv import load_dotenv
 load_dotenv()

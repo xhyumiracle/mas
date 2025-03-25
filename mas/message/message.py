@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+import logging
 import json
 from typing import List, Dict, Sequence, Optional, Union, Any
 from pydantic import BaseModel
@@ -40,15 +40,15 @@ class Message(BaseModel):
         return message_dict
     
     def pprint(self):
-        print(json.dumps(self.to_dict(), indent=2))
+        logging.info(json.dumps(self.to_dict(), indent=2))
         
 Messages = Optional[List[Union[Dict, Message]]]
 
 def pprint_messages(messages: Messages) -> None:
     """Pretty print the Messages object."""
     if messages is None:
-        print("No messages to display.")
+        logging.warning("No messages to display.")
     else:
-        print("\n=======Messages=====\n")
-        print(json.dumps([m.to_dict() for m in messages], indent=2))
-        print("=======End=======\n")
+        logging.info("\n=======Messages=====\n")
+        logging.info(json.dumps([m.to_dict() for m in messages], indent=2))
+        logging.info("=======End=======\n")

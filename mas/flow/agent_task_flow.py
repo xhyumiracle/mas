@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional, Iterator, Type
 from pydantic import BaseModel, ConfigDict
 import networkx as nx
@@ -63,7 +64,7 @@ class AgentTaskFlow(BaseModel):
         return self.run()
 
     def pprint_flow_order(self):
-        print(self.executor.get_execution_chain_str())
+        logging.info(self.executor.get_execution_chain_str())
     '''
     for pydantic, resolve AgentTaskGraph compatiblity issue
     '''

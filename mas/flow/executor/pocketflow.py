@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+import logging
 from typing import List
 from mas.agent import Agent
 from mas.message import Message, pprint_messages
@@ -101,12 +101,12 @@ class FlowNode(Node):
     
     def exec(self, messages):
 
-        print(f"Running Agent[id={self.agent.id}] with input:")
+        logging.info(f"Running Agent[id={self.agent.id}] with input:")
         pprint_messages(messages)
 
         response_message = self.agent.run(messages=messages)
         
-        print(f"Agent[id={self.agent.id}] complete with response:")
+        logging.info(f"Agent[id={self.agent.id}] complete with response:")
         pprint_messages([response_message])
         
         return response_message
@@ -117,7 +117,7 @@ class FlowNode(Node):
         successors = list(shared["graph"].successors(self.agent.id))
         
         if not any(successors):
-            print('no successors, im the last node, writting results')
+            logging.info('no successors, im the last node, writting results')
             shared["final_output_message"] = exec_res
 
         for succ in successors:

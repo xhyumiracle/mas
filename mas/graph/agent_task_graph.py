@@ -1,4 +1,4 @@
-# from pydantic import BaseModel, ConfigDict
+import logging
 from dataclasses import asdict
 from typing import Tuple, Iterable, List
 import networkx as nx
@@ -76,11 +76,11 @@ class AgentTaskGraph(nx.DiGraph):
         
         pp = pprint.PrettyPrinter(indent=2)
 
-        print("Nodes:")
-        pp.pprint(dict(self.nodes(data=True)))
+        logging.info("Nodes:")
+        logging.info(pp.pformat(dict(self.nodes(data=True))))
 
-        print("\nEdges:")
-        pp.pprint(list(self.edges(data=True)))
+        logging.info("\nEdges:")
+        logging.info(pp.pformat(list(self.edges(data=True))))
 
     def plot(self):
         import matplotlib.pyplot as plt

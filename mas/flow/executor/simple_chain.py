@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+import logging
 from mas.flow.executor.base import FlowExecutor
 from mas.memory.memory import FlowMemory
 from mas.message import Message
@@ -13,5 +13,5 @@ class SimpleChainExecutor(FlowExecutor):
             response = agent.run(message=request)
             request.pprint()
             response.pprint()
-        print("Chain executed successfully")
+        logging.info("Chain executed successfully")
         return response

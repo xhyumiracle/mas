@@ -43,8 +43,3 @@ class YamlParser(Parser):
         # else: # v0: DAG only
             # edges.append(node_dict[fr], node_dict[to], key=type_str)
         return edges
-
-if __name__ == "__main__":
-    parser = YamlParser()
-    graph = parser.parse_from_path('tests/data/graph.0.yaml')
-    print(graph)
