@@ -1,11 +1,10 @@
 import logging
-from mas.curator import ModelCurator, ToolCurator
 from mas.mas import MasFactory
-from mas.agent.agno import AgnoAgent
-from mas.agent.mock import MockAgent
-from mas.orch.mock import MockOrch
-from mas.orch.parser.yaml import YamlParser
-from mas.flow.executor.pocketflow import PocketflowExecutor
+from mas.orch import MockOrch
+from mas.orch.parser import YamlParser
+from mas.curator import ModelCurator, ToolCurator
+from mas.flow import PocketflowExecutor
+from mas.agent import MockAgent, AgnoAgent
 from mas.tool import TOOLS
 from mas.model import MODELS
 

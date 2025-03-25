@@ -33,10 +33,11 @@ class MasFactory:
         model_pool = ModelPool(map=self.model_map)
         logging.info(f"""Loaded {model_pool.count()} models""")
 
+        # set tools and models to global Agent class
         Agent.set_model_pool(model_pool)
         Agent.set_tool_pool(tool_pool)
 
-        ''' Initialize agent task graph builder '''
+        ''' Initialize orchestrator, i.e. the agent task graph builder '''
 
         kwargs = {"parser": self.cls_Parser()} if self.cls_Parser is not None else {}
 
@@ -57,8 +58,6 @@ class MasFactory:
         self.flow = AgentTaskFlow(
             agent_cls=self.cls_Agent,
             executor=self.cls_Executor(is_chain=self.executor_is_chain),
-            model_pool=model_pool,
-            tool_pool=tool_pool
         )
 
     def run(self, query: str):
@@ -66,7 +65,7 @@ class MasFactory:
 
         agent_task_graph = self.orch.generate(query=query)
 
-        print("-----------1.Agent Task Graph----------")
+        print("\n----------------1.Agent Task Graph---------------\n")
         
         for curator  in self.curators:
             agent_task_graph = curator.curate(agent_task_graph)
@@ -74,7 +73,14 @@ class MasFactory:
         agent_task_graph.pprint()
         # agent_task_graph.plot()
 
-        print("-----------2.Execution Flow----------")
+        print("\n----------------2.Curations---------------\n")
+
+        for curator  in self.curators:
+            agent_task_graph = curator.curate(agent_task_graph)
+
+        agent_task_graph.pprint()
+
+        print("\n----------------3.Execution Flow---------------\n")
 
         self.flow.build(agent_task_graph)
 
@@ -82,8 +88,8 @@ class MasFactory:
 
         self.flow.pprint_flow_order()
 
-        print("-----------3.Run Tasks----------")
+        print("\n----------------4.Run Tasks---------------\n")
 
         response_message: Message = self.flow.run() #TODO: not sure format
-        print("-----------Final Answer----------")
+        print("\n----------------Final Answer---------------\n")
         response_message.pprint()

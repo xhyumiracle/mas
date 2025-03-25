@@ -30,8 +30,7 @@ def test_PocketFlowChainFlow():
 
     flow = AgentTaskFlow(
         agent_cls=AgnoAgent,
-        executor=PocketflowExecutor(is_chain=True),
-        is_chain=True
+        executor=PocketflowExecutor(is_chain=True)
     )
     flow.build(build_graph_from_yaml())
     flow.run()
