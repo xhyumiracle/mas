@@ -1,0 +1,15 @@
+{
+    "GPT-4o-audio": "Presumed variant of GPT-4o by OpenAI, likely focused on audio processing, but no specific public release exists; possibly a future or internal model for real-time audio tasks.",
+    "GPT-4o": "OpenAI's multimodal model released in May 2024, designed for fast, versatile performance across text, images, and other data, with a 128K token context length.",
+    "GPT-o1": "OpenAI's reasoning-focused model launched in September 2024, optimized for complex problem-solving like math and coding, with enhanced step-by-step logic.",
+    "GPT-o3-mini": "No official release exists; likely a speculative or future smaller variant of an 'o3' model, possibly aimed at efficient reasoning tasks.",
+    "Gemini-2.0-flash-lite": "No distinct public model; possibly a misnomer or unreleased lightweight version of Gemini 2.0 Flash, intended for low-latency, cost-effective tasks.",
+    "Gemini-2.0-flash": "Google's efficient model released in December 2024, built for low-latency agentic tasks with a 1M token context length, excelling in speed and cost.",
+    "Gemini-1.5-flash": "Google's fast, lightweight model from May 2024, with a 1M token context length, designed for quick responses in real-time applications.",
+    "Gemini-1.5-pro": "Google's advanced model from May 2024, with a 2M token context length, optimized for complex multimodal tasks and enterprise use.",
+    "Claude-3.5-sonnet": "Anthropic's mid-tier model updated in October 2024, with a 200K token context length, known for strong reasoning and coding capabilities.",
+    "Claude-3.5-haiku": "Anthropic's compact, fast model released in October 2024, with a 200K token context length, tailored for speed and cost-efficiency.",
+    "Claude-3.7-sonnet": "Anthropic's latest hybrid reasoning model from early 2025, with a 200K token context length, featuring step-by-step problem-solving.",
+    "Imagen-3": "Google's advanced text-to-image model, released in August 2024, focused on generating high-quality images from text prompts.",
+    "DALL-E": "OpenAI's text-to-image model, with DALL-E 3 as the latest (October 2023), designed for creative image generation from detailed text descriptions."
+  }

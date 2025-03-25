@@ -1,5 +1,5 @@
 
-from mas.orch.parser.yaml import YamlParser
+from mas.orch.parser.yaml_parser import YamlParser
 
 def test_parse_from_path():
     parser = YamlParser()

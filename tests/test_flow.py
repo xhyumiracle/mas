@@ -4,7 +4,7 @@ from mas.agent.mock import MockAgent
 from mas.flow.agent_task_flow import AgentTaskFlow
 from mas.flow.executor.pocketflow import PocketflowExecutor
 from mas.flow.executor.simple_chain import SimpleChainExecutor
-from mas.orch.parser.yaml import YamlParser
+from mas.orch.parser.yaml_parser import YamlParser
 from mas.tool import ToolPool, TOOLS
 from mas.model import ModelPool, MODELS
 

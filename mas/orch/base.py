@@ -9,8 +9,8 @@ from mas.tool.pool import ToolPool
 
 @dataclass
 class Orchestrator(ABC): 
-    model_pool: ModelPool
-    tool_pool: ToolPool
+    model_pool: Optional[ModelPool]
+    tool_pool: Optional[ToolPool]
     
     def generate(
         self, 

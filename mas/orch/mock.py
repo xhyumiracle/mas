@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from mas.graph.agent_task_graph import AgentTaskGraph
 from mas.orch.base import Orchestrator
-from mas.orch.parser.yaml import Parser
-from mas.orch.parser.yaml import YamlParser
+from mas.orch.parser.yaml_parser import Parser
+from mas.orch.parser.yaml_parser import YamlParser
 
 @dataclass
 class MockOrch(Orchestrator):
