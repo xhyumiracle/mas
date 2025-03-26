@@ -4,9 +4,9 @@ from mas.agent.mock import MockAgent
 from mas.flow.agent_task_flow import AgentTaskFlow
 from mas.flow.executor.pocketflow import PocketflowExecutor
 from mas.flow.executor.simple_chain import SimpleChainExecutor
-from mas.orch.parser.yaml_parser import YamlParser
-from mas.tool import ToolPool, TOOLS
-from mas.model import ModelPool, MODELS
+from mas.orch.parser import YamlParser
+from mas.tool import ToolPool
+from mas.model import ModelPool
 
 def build_graph_from_yaml():
     parser = YamlParser()
@@ -23,8 +23,8 @@ def test_SimpleChainFlow():
 
 def test_PocketFlowChainFlow():
 
-    tool_pool = ToolPool(map=TOOLS)
-    model_pool = ModelPool(map=MODELS)
+    tool_pool = ToolPool.initialize()
+    model_pool = ModelPool().initialize()
     Agent.set_model_pool(model_pool)
     Agent.set_tool_pool(tool_pool)
 

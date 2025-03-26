@@ -1,24 +1,21 @@
 import asyncio
+
+from dotenv import load_dotenv
+load_dotenv()
+
 import logging
+logging.basicConfig(level=logging.INFO)
 
 from mas.orch import Orchestrator, MockOrch
 from mas.orch.parser import YamlParser
 from mas.curator import ModelCurator, ToolCurator
-from mas.orch import Orchestrator, MockOrch
-from mas.orch.parser.yaml_parser import YamlParser
-from mas.flow.agent_task_flow import AgentTaskFlow
-from mas.flow.executor.pocketflow import PocketflowExecutor
-from mas.agent import Agent
-from mas.agent.agno import AgnoAgent
-from mas.tool import ToolPool, TOOLS
-from mas.model import ModelPool, MODELS
+from mas.flow import AgentTaskFlow, PocketflowExecutor
+from mas.agent import Agent, MockAgent, AgnoAgent
+from mas.tool import ToolPool
+from mas.model import ModelPool
 from mas.message import Message
 
-# config logging
-logging.basicConfig(level=logging.INFO)
-
-from dotenv import load_dotenv
-load_dotenv()
+logger = logging.getLogger(__name__)
 
 async def run():
     """
@@ -28,11 +25,11 @@ async def run():
     ''' Load model pool & tool pool '''
 
     # Loading tools
-    tool_pool = ToolPool(map=TOOLS)
+    tool_pool = ToolPool.initialize()
     print(f"""Loaded {tool_pool.count()} tools""")
 
     # Loading models
-    model_pool = ModelPool(map=MODELS)
+    model_pool = ModelPool.initialize()
     print(f"""Loaded {model_pool.count()} models""")
     Agent.set_model_pool(model_pool)
     Agent.set_tool_pool(tool_pool)

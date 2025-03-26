@@ -5,6 +5,8 @@ import networkx as nx
 
 from mas.graph.types import EdgeAttr, NodeAttr, NodeId
 
+logger = logging.getLogger(__name__)
+
 '''
 Graph:
 v0: 
@@ -76,11 +78,11 @@ class AgentTaskGraph(nx.DiGraph):
         
         pp = pprint.PrettyPrinter(indent=2)
 
-        logging.info("Nodes:")
-        logging.info(pp.pformat(dict(self.nodes(data=True))))
+        logger.info("Nodes:")
+        logger.info(pp.pformat(dict(self.nodes(data=True))))
 
-        logging.info("\nEdges:")
-        logging.info(pp.pformat(list(self.edges(data=True))))
+        logger.info("\nEdges:")
+        logger.info(pp.pformat(list(self.edges(data=True))))
 
     def plot(self):
         import matplotlib.pyplot as plt

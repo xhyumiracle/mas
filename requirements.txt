@@ -73,11 +73,6 @@ kiwisolver==1.4.8
 lxml==5.3.1
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
-<<<<<<< Updated upstream
-=======
-# Editable Git install with no remote (mas==0.1)
-# -e /Users/xiaohang.yu/Documents/GitHub/xhyumiracle/MasATG
->>>>>>> Stashed changes
 matplotlib==3.10.1
 mdurl==0.1.2
 mpmath==1.3.0

@@ -7,6 +7,8 @@ from mas.graph.agent_task_graph import AgentTaskGraph
 from mas.flow import FlowExecutor
 from pocketflow import Node, BatchNode, Flow
 
+logger = logging.getLogger(__name__)
+
 class PocketflowExecutor(FlowExecutor):
 
     def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
@@ -101,12 +103,12 @@ class FlowNode(Node):
     
     def exec(self, messages):
 
-        logging.info(f"Running Agent[id={self.agent.id}] with input:")
+        logger.info(f"Running Agent[id={self.agent.id}] with input:")
         pprint_messages(messages)
 
         response_message = self.agent.run(messages=messages)
         
-        logging.info(f"Agent[id={self.agent.id}] complete with response:")
+        logger.info(f"Agent[id={self.agent.id}] complete with response:")
         pprint_messages([response_message])
         
         return response_message
@@ -117,7 +119,7 @@ class FlowNode(Node):
         successors = list(shared["graph"].successors(self.agent.id))
         
         if not any(successors):
-            logging.info('no successors, im the last node, writting results')
+            logger.info('no successors, im the last node, writting results')
             shared["final_output_message"] = exec_res
 
         for succ in successors:
