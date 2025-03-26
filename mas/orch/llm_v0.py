@@ -19,7 +19,7 @@ class Agent(BaseModel):
     name: str
     profile: str
     prompt: str
-    model: List[str]
+    model: str
     tools: List[str]
     input: List[str]
     output: List[str]
@@ -102,7 +102,7 @@ class LLMOrch(Orchestrator):
         print(updated_prompt)
         
         completion = self.client.beta.chat.completions.parse(
-            model="gpt-4o-2024-08-06",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": updated_prompt},
                 {"role": "user", "content": user_input},

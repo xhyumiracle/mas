@@ -25,18 +25,20 @@ class ModelPool(Pool[Model]):
         
         pool.autoload()
 
-        logger.info(f"ToolPool.initialize: Loaded {pool.count()} tools")
+        logger.info(f"ModelPool.initialize: Loaded {pool.count()} models")
 
         return pool
 
-    def autoload(self, dir: str = None, module_name_prefix: str = None): # "mas.model.models"
+    def autoload(self, dir: str = None, module_name_prefix: str = None):
         model_dir = relative_parent_to_root(__file__, "models") if dir is None else dir
+        logger.debug(f"Autoloading models from: {model_dir}")
         super().autoload(model_dir, module_name_prefix)
+        logger.debug(f"After autoload, model count: {self.count()}")
     
     @classmethod
     def register(cls, name: str, description: str = "") -> Callable[[Model], Model]:
         """
-        Decorator to register a tool function into the active ToolPool context.
+        Decorator to register a model function into the active ModelPool context.
 
         Usage:
             @ModelPool.register(name="model_name", description="my own model")
