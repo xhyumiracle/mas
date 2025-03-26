@@ -78,20 +78,25 @@ class LLMOrch(Orchestrator):
                     data = yaml.safe_load(file)
                     s = yaml.dump(data, default_flow_style=False)
             return s
-        # Load models and tools from files
-        current_dir = Path(__file__).parent
-        models_path = str(current_dir / "models.json")
-        tools_path = str(current_dir / "tools.json")
+        # # Load models and tools from files
+        # current_dir = Path(__file__).parent
+        # models_path = str(current_dir / "models.json")
+        # tools_path = str(current_dir / "tools.json")
 
-        models = process_input(models_path)
-        tools = process_input(tools_path)
+        # models = process_input(models_path)
+        # tools = process_input(tools_path)
+
+        ''' Load models and tools from pools '''
+
+        models = self.model_pool.all_names_and_descriptions()
+        tools = self.tool_pool.all_names_and_descriptions()
         modalities = '{text, image, video, audio}'
 
         # Update system prompt with models, tools, and modalities
         updated_prompt = (
             sys_msg
-            .replace('{model_list}', models)
-            .replace('{tool_list}', tools)
+            .replace('{model_list}', yaml.dump(models))
+            .replace('{tool_list}', yaml.dump(tools))
             .replace('{modalities}', modalities)
         )
         print(updated_prompt)
@@ -123,19 +128,3 @@ class LLMOrch(Orchestrator):
 
         return graph
 
-
-
-# Example usage (for testing purposes)
-if __name__ == "__main__":
-
-    user_msg = "Read my csv file that contails people's names and a descriptions. Select an appropriate birthday present for each of them, and generate a anime picture for each. Then suggest 3-5 links for birthday presents from online shopping platforms that ship within the US and save the presents names, prices, and the corresponding links to the same csv file. Pay attention that each present should be below $50."
-
-    planner = LLMOrch(
-        user_request=user_msg,
-        base_model="gpt-4o",  # default
-        model_pool=None,
-        tool_pool=None,
-    )
-
-    graph = planner.generate_by_messages()
-    graph.pprint()

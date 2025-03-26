@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Dict, Sequence, Optional, Union
+from typing import Sequence, Optional
 from mas.message import Message
 from mas.graph.agent_task_graph import AgentTaskGraph
 from abc import ABC, abstractmethod
@@ -7,10 +7,11 @@ from abc import ABC, abstractmethod
 from mas.model.pool import ModelPool
 from mas.tool.pool import ToolPool
 
-@dataclass
+@dataclass(kw_only=True)
 class Orchestrator(ABC): 
-    model_pool: Optional[ModelPool]
-    tool_pool: Optional[ToolPool]
+    ''' load builtin models and tools by default '''
+    model_pool: ModelPool = ModelPool.initialize()
+    tool_pool: ToolPool = ToolPool.initialize()
     
     def generate(
         self, 
