@@ -26,13 +26,9 @@ async def run():
 
     # Loading tools
     tool_pool = ToolPool.initialize()
-    print(f"""Loaded {tool_pool.count()} tools""")
 
     # Loading models
     model_pool = ModelPool.initialize()
-    print(f"""Loaded {model_pool.count()} models""")
-    Agent.set_model_pool(model_pool)
-    Agent.set_tool_pool(tool_pool)
 
     ''' Initialize agent task graph builder '''
 

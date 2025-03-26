@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Sequence, Optional
 from mas.message import Message
 from mas.graph.agent_task_graph import AgentTaskGraph
@@ -10,8 +10,8 @@ from mas.tool.pool import ToolPool
 @dataclass(kw_only=True)
 class Orchestrator(ABC): 
     ''' load builtin models and tools by default '''
-    model_pool: ModelPool = ModelPool.initialize()
-    tool_pool: ToolPool = ToolPool.initialize()
+    model_pool: ModelPool = field(default_factory=ModelPool.initialize)
+    tool_pool: ToolPool = field(default_factory=ToolPool.initialize)
     
     def generate(
         self, 
