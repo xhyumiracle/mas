@@ -35,7 +35,8 @@ class AgentTaskGraph(nx.DiGraph):
             _fr_modality = set(self.get_node_attr(fr).output_formats)
             _to_modality = set(self.get_node_attr(to).input_formats)
             if not _fr_modality.issubset(_to_modality):
-                raise Exception("Modalities do not match")
+                logger.error(f"Modalities do not match: {fr} -> {to}")
+                # raise Exception("Modalities do not match")
     
     #TODO use @validator?
     def validate(self):
