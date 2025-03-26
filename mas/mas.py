@@ -11,46 +11,34 @@ from mas.model import ModelPool
 from mas.message import Message
 from mas.flow import FlowExecutor
 
+logger = logging.getLogger(__name__)
+
 @dataclass
 class MasFactory:
-    tool_map: Dict
-    model_map: Dict
     cls_Orch: Type[Orchestrator]
     cls_Agent: Type[Agent]
     cls_Executor: Type[FlowExecutor]
     cls_Curators: Dict[Literal["tool", "model"], Type[Curator]] = field(default_factory=dict)
     cls_Parser: Optional[Type[Parser]] = None
+    model_pool: ModelPool = ModelPool.initialize()
+    tool_pool: ToolPool = ToolPool.initialize()
     executor_is_chain: bool = True
 
     def build(self):
-        ''' Load model pool & tool pool '''
-
-        # Loading tools
-        tool_pool = ToolPool(map=self.tool_map)
-        logging.info(f"""Loaded {tool_pool.count()} tools""")
-
-        # Loading models
-        model_pool = ModelPool(map=self.model_map)
-        logging.info(f"""Loaded {model_pool.count()} models""")
-
-        # set tools and models to global Agent class
-        Agent.set_model_pool(model_pool)
-        Agent.set_tool_pool(tool_pool)
-
         ''' Initialize orchestrator, i.e. the agent task graph builder '''
 
         kwargs = {"parser": self.cls_Parser()} if self.cls_Parser is not None else {}
 
         self.orch = self.cls_Orch(
             # parser=self.cls_Parser(),
-            model_pool=model_pool,
-            tool_pool=tool_pool,
+            model_pool=self.model_pool,
+            tool_pool=self.tool_pool,
             **kwargs
         )
 
         ''' Initialize curators '''
 
-        pools = {"tool": tool_pool, "model": model_pool}
+        pools = {"tool": self.tool_pool, "model": self.model_pool}
         self.curators = [_C(pool=pools.get(key)) for key, _C in self.cls_Curators.items()]
 
         ''' Initialize flow executor '''
