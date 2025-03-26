@@ -15,6 +15,8 @@ from mas.model.pool import ModelPool
 from mas.storage import InMemoryStorage
 from mas.tool.pool import ToolPool
 
+logger = logging.getLogger(__name__)
+
 # TODO: memory should be in flow or executor? maybe base executor
 '''
 Flow:
@@ -64,7 +66,7 @@ class AgentTaskFlow(BaseModel):
         return self.run()
 
     def pprint_flow_order(self):
-        logging.info(self.executor.get_execution_chain_str())
+        logger.info(self.executor.get_execution_chain_str())
     '''
     for pydantic, resolve AgentTaskGraph compatiblity issue
     '''
