@@ -1,12 +1,12 @@
 import logging
 from dataclasses import dataclass, field
 import yaml, os, json
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from typing import List, Optional
 from pathlib import Path
 from openai import OpenAI
 from tenacity import RetryCallState, retry, stop_after_attempt, wait_fixed, retry_if_exception_type
-from mas.errors.graph_error import GraphValidationError
+from mas.errors.orch_error import OrchestrationError
 from mas.orch.parser import YamlParser, JsonParser
 from mas.graph.agent_task_graph import AgentTaskGraph
 from mas.orch import Orchestrator
@@ -104,18 +104,21 @@ class LLMOrch(Orchestrator):
         # print(updated_prompt)
         
         logger.info(f"LLMOrch: messages: {messages}")
-
-        completion = self.client.beta.chat.completions.parse(
-            model="gpt-4o",
-            messages=messages,
-            response_format=Workflow,
-        )
-        # Extract and return the workflow
-        message = completion.choices[0].message
+        resp_message = None
+        try:
+            completion = self.client.beta.chat.completions.parse(
+                model="gpt-4o",
+                messages=messages,
+                response_format=Workflow,
+            )
+            # Extract and return the workflow
+            resp_message = completion.choices[0].message
+        except ValidationError as e:
+            raise OrchestrationError(f"Invalid structured output format, can't parse it")
         
         if Print:
-            print(message.parsed.model_dump_json(indent=2))
-        return message
+            print(resp_message.parsed.model_dump_json(indent=2))
+        return resp_message
     
     
     def generate_by_message(self, user_message, historical_messages) -> AgentTaskGraph:
@@ -139,7 +142,7 @@ class LLMOrch(Orchestrator):
         @retry(
             stop=stop_after_attempt(3), # retry times
             wait=wait_fixed(1),         # wait time between retries
-            retry=retry_if_exception_type(GraphValidationError),
+            retry=retry_if_exception_type(OrchestrationError),
             before_sleep=before_retry
         )
         def run_once(original_messages: List[Message]) -> AgentTaskGraph:
