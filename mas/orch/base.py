@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Sequence, Optional
+from typing import Sequence, Optional, Union
 from mas.message import Message
 from mas.graph.agent_task_graph import AgentTaskGraph
 from abc import ABC, abstractmethod
@@ -15,27 +15,17 @@ class Orchestrator(ABC):
     
     def generate(
         self, 
-        query: Optional[str] = None, 
-        *, 
-        message: Optional[Message] = None,
-        messages: Optional[Sequence[Message]]=[]
-    ) -> AgentTaskGraph:        
-        if messages is None:
-            messages = []
-
-        # append message
-        if message is not None:
-            messages.append(message)
-        
-        # append query to the last
-        if query is not None:
-            messages.append(Message(role="user", content=query))
-        
-        if messages is None:
-            return None
-        
-        return self.generate_by_messages(messages)
+        query: Union[str, Message],
+        historical_messages: Optional[Sequence[Message]]=[]
+    ) -> AgentTaskGraph:
+        # assemble query to message
+        user_message = query if type(query) == Message else Message(role="user", content=query) 
+        return self.generate_by_message(user_message, historical_messages)
     
     @abstractmethod
-    def generate_by_messages(self, messages: Sequence[Message]) -> AgentTaskGraph:
+    def generate_by_message(
+        self,
+        user_message: Message,
+        historical_messages: Optional[Sequence[Message]]=[]
+    ) -> AgentTaskGraph:
         raise NotImplementedError

@@ -34,20 +34,21 @@ async def run():
     # Process each question
     results = []
     
+    # Initialize orchestrator with current question
+    orch = LLMOrch(
+        model_pool=model_pool,
+        tool_pool=tool_pool
+    )
+
     for index, item in enumerate(gaia_data):
         query = item['Question']
         print(f"\n====== Processing Question {index+1}/{len(gaia_data)} ======")
         print(f"Question: {query}")
         
-        # Initialize orchestrator with current question
-        orch = LLMOrch(
-            user_request=query,
-            model_pool=model_pool,
-            tool_pool=tool_pool
-        )
+        orch.generate(query=query)
         
         # Generate agent task graph
-        agent_task_graph = orch.generate_by_messages()
+        agent_task_graph = orch.generate_by_message()
         print("-----------1.Agent Task Graph----------")
         agent_task_graph.pprint()
         

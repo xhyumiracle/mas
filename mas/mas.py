@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, Literal, Optional, Type
+from typing import Dict, Literal, Optional, Type, Union
 from mas.curator.base import Curator
 from mas.orch import Orchestrator
 from mas.orch.parser import Parser
@@ -48,12 +48,12 @@ class MasFactory:
             executor=self.cls_Executor(is_chain=self.executor_is_chain),
         )
 
-    def run(self, query: str):
+    def run(self, query: Union[str, Message]) -> Message:
         ''' Generate agent task graph & Agents '''
 
-        agent_task_graph = self.orch.generate(query=query)
+        agent_task_graph = self.orch.generate(query)
 
-        print("\n----------------1.Agent Task Graph---------------\n")
+        logger.info("\n----------------1.Agent Task Graph---------------\n")
         
         for curator  in self.curators:
             agent_task_graph = curator.curate(agent_task_graph)
@@ -61,14 +61,14 @@ class MasFactory:
         agent_task_graph.pprint()
         # agent_task_graph.plot()
 
-        print("\n----------------2.Curations---------------\n")
+        logger.info("\n----------------2.Curations---------------\n")
 
         for curator  in self.curators:
             agent_task_graph = curator.curate(agent_task_graph)
 
         agent_task_graph.pprint()
 
-        print("\n----------------3.Execution Flow---------------\n")
+        logger.info("\n----------------3.Execution Flow---------------\n")
 
         self.flow.build(agent_task_graph)
 
@@ -76,8 +76,9 @@ class MasFactory:
 
         self.flow.pprint_flow_order()
 
-        print("\n----------------4.Run Tasks---------------\n")
+        logger.info("\n----------------4.Run Tasks---------------\n")
 
         response_message: Message = self.flow.run() #TODO: not sure format
-        print("\n----------------Final Answer---------------\n")
+        logger.info("\n----------------Final Answer---------------\n")
         response_message.pprint()
+        return response_message

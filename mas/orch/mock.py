@@ -13,5 +13,5 @@ class MockOrch(Orchestrator):
         return AgentTaskGraph(graph)
     
     ''' only a mock implementation '''
-    def generate_by_messages(self, messages) -> AgentTaskGraph:
+    def generate_by_message(self, user_message, historical_messages) -> AgentTaskGraph:
         return self.load(graph_cfg_path="tests/data/graph.0.yaml")

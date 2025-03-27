@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from mas.orch.parser import YamlParser, JsonParser
 from mas.graph.agent_task_graph import AgentTaskGraph
@@ -5,14 +6,14 @@ from mas.orch import Orchestrator
 from mas.message import Message
 import yaml, os, json
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from pathlib import Path
 from openai import OpenAI
 
 from dotenv import load_dotenv
 load_dotenv()
 
-
+logger = logging.getLogger(__name__)
 
 class Agent(BaseModel):
     id: int
@@ -31,7 +32,6 @@ class Workflow(BaseModel):
 
 @dataclass
 class LLMOrch(Orchestrator):
-    user_request: str
     base_model: str = 'gpt-4o'  # More generally: assume this is the LLM client or interface
     client = OpenAI(base_url=os.getenv('OPENAI_BASE_URL'), api_key=os.getenv('OPENAI_API_KEY')) # necessary to define it here otherwise openai's chat completion will return error
 
@@ -45,7 +45,7 @@ class LLMOrch(Orchestrator):
         tools_path = current_dir / "tools"
         return prompt_path, models_path, tools_path
 
-    def get_structured_output(self, user_input:str, Print:bool=True) -> Workflow:
+    def get_structured_output(self, user_message:Message, historical_messages:Optional[List[Message]] , Print:bool=True) -> Workflow:
         """
         Let LLM generate a structured output for the task graph
         """
@@ -99,14 +99,17 @@ class LLMOrch(Orchestrator):
             .replace('{tool_list}', yaml.dump(tools))
             .replace('{modalities}', modalities)
         )
-        print(updated_prompt)
-        
+        # print(updated_prompt)
+        messages=[
+            *historical_messages,
+            {"role": "system", "content": updated_prompt},
+            user_message.to_dict(),
+        ]
+        logger.info(f"LLMOrch: messages: {messages}")
+
         completion = self.client.beta.chat.completions.parse(
             model="gpt-4o",
-            messages=[
-                {"role": "system", "content": updated_prompt},
-                {"role": "user", "content": user_input},
-            ],
+            messages=messages,
             response_format=Workflow,
         )
         # Extract and return the workflow
@@ -116,12 +119,10 @@ class LLMOrch(Orchestrator):
             print(workflow.model_dump_json(indent=2))
         return workflow
         
-
-
-    def generate_by_messages(self) -> AgentTaskGraph:
+    def generate_by_message(self, user_message, historical_messages) -> AgentTaskGraph:
         """Generate an AgentTaskGraph from a sequence of messages."""
         # Prepare system and user prompts
-        llm_output = self.get_structured_output(self.user_request) # it's a dict
+        llm_output = self.get_structured_output(user_message, historical_messages) # it's a dict
         json_string = llm_output.model_dump_json()
         parser = JsonParser()
         graph = parser.parse_from_string(json_string)
