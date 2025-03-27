@@ -7,12 +7,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 from mas.orch import Orchestrator, MockOrch
-from mas.orch.parser import YamlParser
 from mas.curator import ModelCurator, ToolCurator
 from mas.flow import AgentTaskFlow, PocketflowExecutor
 from mas.agent import Agent, MockAgent, AgnoAgent
-from mas.tool import ToolPool
-from mas.model import ModelPool
 from mas.message import Message
 
 logger = logging.getLogger(__name__)
@@ -22,21 +19,9 @@ async def run():
     Example MAS: one-time answering
     """
 
-    ''' Load model pool & tool pool '''
-
-    # Loading tools
-    tool_pool = ToolPool.initialize()
-
-    # Loading models
-    model_pool = ModelPool.initialize()
-
     ''' Initialize agent task graph builder '''
 
-    orch: Orchestrator = MockOrch(
-        parser=YamlParser(),
-        model_pool=model_pool,
-        tool_pool=tool_pool
-    )
+    orch: Orchestrator = MockOrch()
 
     ''' Generate agent task graph & Agents '''
 
@@ -52,7 +37,7 @@ async def run():
 
     ''' Initialize curators '''
 
-    curators = [ToolCurator(pool=tool_pool), ModelCurator(pool=model_pool)]
+    curators = [ToolCurator(), ModelCurator()]
     for curator in curators:
         agent_task_graph = curator.curate(agent_task_graph)
 
@@ -65,8 +50,6 @@ async def run():
         # agent_cls=AgnoAgent,
         agent_cls=MockAgent,
         executor=PocketflowExecutor(is_chain=True),
-        model_pool=model_pool,
-        tool_pool=tool_pool
     )
     flow.build(agent_task_graph)
 

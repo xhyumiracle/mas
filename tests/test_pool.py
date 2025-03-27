@@ -2,12 +2,12 @@ from mas.model.pool import ModelPool
 from mas.tool import ToolPool
 
 def test_tool_pool():
-    tool_pool = ToolPool().initialize(load_builtin=True, ext_dir="tests/data/tools")
+    tool_pool = ToolPool().initialize(load_builtin=True, ext_dir="tests_artifacts/tools")
     print("Loaded tools:", tool_pool.list())
     print("Search result:", tool_pool.get("test_tool")("hi"))
 
 def test_model_pool():
-    model_pool = ModelPool().initialize(load_builtin=True, ext_dir="tests/data/models")
+    model_pool = ModelPool().initialize(load_builtin=True, ext_dir="tests_artifacts/models")
     print("Loaded models:", model_pool.list())
     print("Test Model:", model_pool.get("test_openai"))
     # _agno_run(model_pool.get("test_model"))

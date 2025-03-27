@@ -25,7 +25,7 @@ async def run():
         cls_Orch=LLMOrch,
         cls_Executor=PocketflowExecutor,
         cls_Agent=AgnoAgent,
-        cls_Curators={"model": ModelCurator, "tool": ToolCurator},
+        cls_Curators=[ModelCurator, ToolCurator],
         executor_is_chain=True,
     )
     mas.build()

@@ -6,13 +6,10 @@ load_dotenv()
 import logging
 logging.basicConfig(level=logging.INFO)
 
-from mas.orch import Orchestrator, MockOrch, LLMOrch
-from mas.orch.parser import YamlParser
+from mas.orch import LLMOrch
 from mas.curator import ModelCurator, ToolCurator
 from mas.flow import AgentTaskFlow, PocketflowExecutor
 from mas.agent import Agent, MockAgent, AgnoAgent
-from mas.tool import ToolPool
-from mas.model import ModelPool
 from mas.message import Message
 import json
 logger = logging.getLogger(__name__)
@@ -24,12 +21,8 @@ async def run():
         logger.error("Failed to load GAIA data")
         return
     
-    # Initialize pools only once for efficiency
-    tool_pool = ToolPool.initialize()
-    model_pool = ModelPool.initialize()
-    
     # Initialize curators once
-    curators = [ToolCurator(pool=tool_pool), ModelCurator(pool=model_pool)]
+    curators = [ToolCurator(), ModelCurator()]
     
     # Process each question
     results = []
@@ -64,8 +57,6 @@ async def run():
         flow = AgentTaskFlow(
             agent_cls=AgnoAgent,
             executor=PocketflowExecutor(is_chain=True),
-            model_pool=model_pool,
-            tool_pool=tool_pool
         )
         flow.build(agent_task_graph)
         flow.pprint_flow_order()
