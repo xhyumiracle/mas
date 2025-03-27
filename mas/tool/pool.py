@@ -3,7 +3,6 @@ import logging
 from typing import Callable, Union, Any
 from mas.agent.base import Agent
 from mas.pool import Pool
-from mas.pool.registry import RegistryContext
 from mas.utils.path import relative_parent_to_root
 
 logger = logging.getLogger(__name__)
@@ -11,23 +10,29 @@ logger = logging.getLogger(__name__)
 ToolType = Union[Callable, Any]
 
 class ToolPool(Pool[ToolType]):
-    _context: RegistryContext[ToolPool] = RegistryContext()
+    _global: ToolPool
 
-    @staticmethod
-    def initialize() -> ToolPool:
+    @classmethod
+    def initialize(cls, load_builtin=True, ext_dir: str = None) -> ToolPool:
         pool = ToolPool()
         
         ''' set this instance to global registry context and Agent class '''
 
-        ToolPool._context.set(pool)
+        cls._global = pool
         Agent.set_tool_pool(pool)
 
         ''' autoload builtin tools '''
         
-        pool.autoload()
+        
+        if load_builtin:
+            pool.autoload()
+            logger.info(f"ToolPool.initialize: Loaded {pool.count()} builtin tools")
 
-        logger.info(f"ToolPool.initialize: Loaded {pool.count()} tools")
+        ''' autoload external models '''
 
+        if ext_dir is not None:
+            pool.autoload(dir=ext_dir)
+            logger.info(f"ToolPool.initialize: Loaded {pool.count()} external tools")
 
         return pool
 
@@ -38,15 +43,26 @@ class ToolPool(Pool[ToolType]):
     @classmethod
     def register(cls, name: str, description: str = "") -> Callable[[ToolType], ToolType]:
         """
-        Decorator to register a tool function into the active ToolPool context.
+        Decorator to register a tool function / instance into the global ToolPool instace.
 
         Usage:
             @ToolPool.register(name="tool_name", description="desc")
             def my_tool(...):
                 ...
+            or
+            ToolPool.register(name="tool_name", description="desc")(MyToolClass(...))
         """
         def decorator(obj: ToolType):
-            instance = cls._context.get()
-            instance.add(name=name, obj=obj, description=description)
+            cls._global.add(name=name, obj=obj, description=description)
             return obj
         return decorator
+    
+    @classmethod
+    def set_global(cls, instance: ToolPool):
+        cls._global = instance
+
+    @classmethod
+    def get_global(cls) -> ToolPool:
+        if cls._global is None:
+            raise RuntimeError("ToolPool._global is not initialized.")
+        return cls._global

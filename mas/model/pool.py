@@ -1,31 +1,38 @@
 from __future__ import annotations
 import logging
-from typing import Callable
+from typing import Callable, Type
 from agno.models.base import Model
 from mas.agent.base import Agent
 from mas.pool import Pool
-from mas.pool.registry import RegistryContext
 from mas.utils.path import relative_parent_to_root
 
 logger = logging.getLogger(__name__)
 
-class ModelPool(Pool[Model]):
-    _context: RegistryContext[ModelPool] = RegistryContext()
+ModelType = Type[Model]
 
-    @staticmethod
-    def initialize() -> ModelPool:
-        pool = ModelPool()
+class ModelPool(Pool[ModelType]):
+    _global: ModelPool
+
+    @classmethod
+    def initialize(cls, load_builtin=True, ext_dir: str = None) -> ModelPool:
+        pool = cls()
         
         ''' set this instance to global registry context and Agent class '''
 
-        ModelPool._context.set(pool)
+        cls._global = pool
         Agent.set_model_pool(pool)
 
         ''' autoload builtin models '''
         
-        pool.autoload()
+        if load_builtin:
+            pool.autoload()
+            logger.info(f"ModelPool.initialize: Loaded {pool.count()} builtin models")
 
-        logger.info(f"ModelPool.initialize: Loaded {pool.count()} models")
+        ''' autoload external models '''
+
+        if ext_dir is not None:
+            pool.autoload(dir=ext_dir)
+            logger.info(f"ModelPool.initialize: Loaded {pool.count()} external models")
 
         return pool
 
@@ -36,16 +43,25 @@ class ModelPool(Pool[Model]):
         logger.debug(f"After autoload, model count: {self.count()}")
     
     @classmethod
-    def register(cls, name: str, description: str = "") -> Callable[[Model], Model]:
+    def register(cls, name: str, description: str = "") -> Callable[[ModelType], ModelType]:
         """
-        Decorator to register a model function into the active ModelPool context.
+        Decorator to register a model class into the global ModelPool instace.
 
         Usage:
             @ModelPool.register(name="model_name", description="my own model")
             model_name = MyModel(...)
         """
-        def decorator(model_cls: Model):
-            ctx = cls._context.get()
-            ctx.add(name=name, obj=model_cls, description=description)
+        def decorator(model_cls: ModelType):
+            cls._global.add(name=name, obj=model_cls, description=description)
             return model_cls
         return decorator
+    
+    @classmethod
+    def set_global(cls, instance: ModelPool):
+        cls._global = instance
+
+    @classmethod
+    def get_global(cls) -> ModelPool:
+        if cls._global is None:
+            raise RuntimeError("ModelPool._global is not initialized.")
+        return cls._global
