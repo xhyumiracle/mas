@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import Callable, Type
+from typing import Callable, Optional, Type
 from agno.models.base import Model
 from mas.agent.base import Agent
 from mas.pool import Pool
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 ModelType = Type[Model]
 
 class ModelPool(Pool[ModelType]):
-    _global: ModelPool
+    _global: Optional["ModelPool"] = None
 
     @classmethod
     def initialize(cls, load_builtin=True, ext_dir: str = None) -> ModelPool:
@@ -63,5 +63,6 @@ class ModelPool(Pool[ModelType]):
     @classmethod
     def get_global(cls) -> ModelPool:
         if cls._global is None:
-            raise RuntimeError("ModelPool._global is not initialized.")
+            logger.info("ModelPool._global is not initialized, initialize now")
+            ModelPool.initialize()
         return cls._global

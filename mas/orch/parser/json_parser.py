@@ -12,9 +12,12 @@ class JsonParser(Parser):
                 raise ValueError(f"Failed to load JSON from {filename} or file is empty")
             return self.parse_from_string(data)
     
-    def parse_from_string(self, dic) -> AgentTaskGraph:
+    def parse_from_string(self, str) -> AgentTaskGraph:
         '''parse from json data to AgentTaskGraph'''
-        dic = json.loads(dic) # dic (the output of the llm) was a string, turn it into dict
+        dic = json.loads(str) # dic (the output of the llm) was a string, turn it into dict
+        return self.parse_from_jsonobj(dic)
+
+    def parse_from_jsonobj(self, dic) -> AgentTaskGraph:
         node_attr_dict = {NodeId(agent['id']): self.to_node_attr(agent) for agent in dic['agents']}
         nodes = [(node_id, node_attr_dict[node_id]) for node_id in node_attr_dict.keys()]
         edges = self.to_edges(dic['edges'])

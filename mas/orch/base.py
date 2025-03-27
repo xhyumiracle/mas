@@ -10,8 +10,8 @@ from mas.tool.pool import ToolPool
 @dataclass(kw_only=True)
 class Orchestrator(ABC): 
     ''' load builtin models and tools by default '''
-    model_pool: ModelPool = field(default_factory=ModelPool.initialize)
-    tool_pool: ToolPool = field(default_factory=ToolPool.initialize)
+    model_pool: ModelPool = field(default_factory=ModelPool.get_global)
+    tool_pool: ToolPool = field(default_factory=ToolPool.get_global)
     
     def generate(
         self, 

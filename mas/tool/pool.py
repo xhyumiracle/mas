@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import Callable, Union, Any
+from typing import Callable, Optional, Union, Any
 from mas.agent.base import Agent
 from mas.pool import Pool
 from mas.utils.path import relative_parent_to_root
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 ToolType = Union[Callable, Any]
 
 class ToolPool(Pool[ToolType]):
-    _global: ToolPool
+    _global: Optional[ToolPool] = None
 
     @classmethod
     def initialize(cls, load_builtin=True, ext_dir: str = None) -> ToolPool:
@@ -64,5 +64,6 @@ class ToolPool(Pool[ToolType]):
     @classmethod
     def get_global(cls) -> ToolPool:
         if cls._global is None:
-            raise RuntimeError("ToolPool._global is not initialized.")
+            logger.info("ToolPool._global is not initialized, initialize now")
+            ToolPool.initialize()
         return cls._global
