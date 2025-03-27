@@ -129,7 +129,7 @@ class LLMOrch(Orchestrator):
         def before_retry(retry_state: RetryCallState):
             # append output to retry
             err = retry_state.outcome.exception()
-            logger.warning(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Retry LLMOrch.generate due to an Exception: {err}")
+            logger.warning(f"Retry LLMOrch.generate due to an Exception: {err}")
             if err:
                 retry_context_messages.append({"role": "user", "content": str(err)})
             else:
