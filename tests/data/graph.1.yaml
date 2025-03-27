@@ -1,0 +1,23 @@
+agents:
+  - id: 1
+    name: Agent1
+    prompt: Search for 3 top San Francisco's news.
+    profile: "You are a news search agent. You should call duckduckgo tool. You should only give the title and links. You can give only 3 results by default."
+    model: "gpt-4o"  # Chosen for its continuous updates and xAI's focus on detailed, creative outputs
+    input:
+      - text
+    output:
+      - text
+    tools:
+      - duckduckgo
+  - id: 2
+    name: SummaryWriter
+    prompt: Summary the news.
+    profile: "You are an editor specializing in markdown format writting."
+    model: "gpt-4o"  # Chosen for its continuous updates and xAI's focus on detailed, creative outputs
+    input:
+      - text
+    output:
+      - text
+edges:
+  - [1, 2]

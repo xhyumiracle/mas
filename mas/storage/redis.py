@@ -43,12 +43,3 @@ class RedisStorage(Storage):
         if entry_id:
             return json.loads(self.r.get(entry_id))
         return None
-
-    # def get_latest_entry_by_caller(self, caller: str) -> Optional[Dict[str, Any]]:
-    #     caller_key = f"caller:{caller}"
-    #     entry_ids = self.r.zrevrange(caller_key, 0, 0)  # reverse range to get latest
-    #     if entry_ids:
-    #         return json.loads(self.r.get(entry_ids[0]))
-    #     return None
-
-# TODO: validate this

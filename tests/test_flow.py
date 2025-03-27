@@ -10,7 +10,7 @@ from mas.model import ModelPool
 
 def build_graph_from_yaml():
     parser = YamlParser()
-    graph = parser.parse_from_path('tests/data/graph.0.yaml')
+    graph = parser.parse_from_path('tests/data/graph.1.yaml')
     return graph
 
 def test_SimpleChainFlow():
@@ -23,10 +23,8 @@ def test_SimpleChainFlow():
 
 def test_PocketFlowChainFlow():
 
-    tool_pool = ToolPool.initialize()
-    model_pool = ModelPool().initialize()
-    Agent.set_model_pool(model_pool)
-    Agent.set_tool_pool(tool_pool)
+    ToolPool.initialize()
+    ModelPool().initialize()
 
     flow = AgentTaskFlow(
         agent_cls=AgnoAgent,

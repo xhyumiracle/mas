@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import Callable
+from typing import Callable, Union, Any
 from mas.agent.base import Agent
 from mas.pool import Pool
 from mas.pool.registry import RegistryContext
@@ -8,7 +8,9 @@ from mas.utils.path import relative_parent_to_root
 
 logger = logging.getLogger(__name__)
 
-class ToolPool(Pool[Callable]):
+ToolType = Union[Callable, Any]
+
+class ToolPool(Pool[ToolType]):
     _context: RegistryContext[ToolPool] = RegistryContext()
 
     @staticmethod
@@ -34,7 +36,7 @@ class ToolPool(Pool[Callable]):
         super().autoload(tool_dir, module_name_prefix)
     
     @classmethod
-    def register(cls, name: str, description: str = "") -> Callable[[Callable], Callable]:
+    def register(cls, name: str, description: str = "") -> Callable[[ToolType], ToolType]:
         """
         Decorator to register a tool function into the active ToolPool context.
 
@@ -43,8 +45,8 @@ class ToolPool(Pool[Callable]):
             def my_tool(...):
                 ...
         """
-        def decorator(func: Callable):
+        def decorator(obj: ToolType):
             instance = cls._context.get()
-            instance.add(name=name, obj=func, description=description)
-            return func
+            instance.add(name=name, obj=obj, description=description)
+            return obj
         return decorator
