@@ -3,6 +3,7 @@ from dataclasses import asdict
 from typing import Tuple, Iterable, List
 import networkx as nx
 
+from mas.errors.graph_error import InvalidNodeError, ModalityMismatchError
 from mas.graph.types import EdgeAttr, NodeAttr, NodeId
 
 logger = logging.getLogger(__name__)
@@ -11,8 +12,8 @@ logger = logging.getLogger(__name__)
 Graph:
 v0: 
 1. DAG, (Multi)DiGraph
-1. each node each out_action: only 1 out_arc
-2. each node each in_action: N>=0 in_arcs
+1. each node out_action: only 1 out_arc
+2. each node in_action: N>=0 in_arcs
 
 v1: 
 1. DCG
@@ -28,6 +29,14 @@ class AgentTaskGraph(nx.DiGraph):
 
     def _validate_v0(self):
         pass
+
+    def _validate_edges(self):
+        # check if node id in all edges are valid
+        for fr, to in self.edges():
+            if fr not in self.nodes:
+                raise InvalidNodeError(f"Node {fr} in edge [{fr} -> {to}] not found in graph")
+            if to not in self.nodes:
+                raise InvalidNodeError(f"Node {to} in edge [{fr} -> {to}] not found in graph")
     
     def _validate_modalities(self):
         # for each edge, check if the from output modality <= to input modality
@@ -35,10 +44,14 @@ class AgentTaskGraph(nx.DiGraph):
             _fr_modality = set(self.get_node_attr(fr).output_formats)
             _to_modality = set(self.get_node_attr(to).input_formats)
             if not _fr_modality.issubset(_to_modality):
-                raise Exception("Modalities do not match")
+                # logger.warning(f"Modalities do not match: {fr} -> {to}")
+                raise ModalityMismatchError(f"Modalities do not match: {fr} -> {to}, make sure [from] output modality is subset of [to] input modality for edges")
+            # if not {"text"}.issubset(_to_modality): # for test purpose
+            #     raise ModalityMismatchError(f"{to}'s input doesn't contain 'text', make sure in any edge [from, to], the input modality of to always contains 'text'")
     
     #TODO use @validator?
     def validate(self):
+        self._validate_edges()
         self._validate_modalities()
         self._validate_v0()
 

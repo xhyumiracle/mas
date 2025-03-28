@@ -53,4 +53,4 @@ def pprint_messages(messages: Messages) -> None:
     else:
         logger.info("\n=======Messages=====\n")
         logger.info(json.dumps([m.to_dict() for m in messages], indent=2))
-        logger.info("=======End=======\n")
+        logger.info("\n=======End=======\n")

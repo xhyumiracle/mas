@@ -119,7 +119,7 @@ class FlowNode(Node):
         successors = list(shared["graph"].successors(self.agent.id))
         
         if not any(successors):
-            logger.info('no successors, im the last node, writting results')
+            logger.debug('no successors, im the last node, writting results')
             shared["final_output_message"] = exec_res
 
         for succ in successors:

@@ -48,6 +48,45 @@ mas.build()
 mas.run("Write a story in George R.R. Martin's style")
 ```
 
+### Adding Tools
+We provide 2 ways to add tools to the tool pool:
+1. Register as a tool function, using the `@ToolPool.register` decorator
+```python
+from mas.tool.pool import ToolPool
+
+@ToolPool.register(
+    name="echo",
+    description="simply echo the input"
+)
+def echo(query: str) -> str:
+    return query
+```
+2. Register as a tool instance, using the `ToolPool.register` function
+```python
+from agno.tools.duckduckgo import DuckDuckGoTools
+from mas.tool.pool import ToolPool
+
+ToolPool.register(
+    name="duckduckgo",
+    description="web search through duckduckgo"
+)(DuckDuckGoTools())
+```
+
+> hint: To test your tool, use `pytest tests/test_tool.py -s`
+
+### Adding Models
+Register using the `@ModelPool.register` decorator
+```python
+from agno.models.google.gemini import Gemini
+from mas.model.pool import ModelPool
+
+@ModelPool.register(name="gemini", description="Gemini")
+class TestModel(Gemini):
+    pass
+```
+
+> hint: To test your tool, use `pytest tests/test_model.py -s`
+
 ## Introduction
 ![MAS framework](assets/arch.png)
 

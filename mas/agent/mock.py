@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import json
-from typing import List, Dict, Sequence, Optional, Union
-from pydantic import BaseModel
+from typing import List
 from mas.graph import NodeAttr
 from mas.agent import Agent, Message
 

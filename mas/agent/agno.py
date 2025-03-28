@@ -10,12 +10,10 @@ from mas.graph.types import NodeAttr, NodeId
 
 @dataclass
 class AgnoAgent(Agent):
-    # agent: Optional[agno_agent.Agent]
-    # TODO: compatible with existing agent: treat it as a tool? optimize: if only 1 tool without params, just call it without llm
     def __init__(self, id, node_attr: NodeAttr):
         super().__init__(id)
         self.agent = agno_agent.Agent(
-            agent_id=id,
+            agent_id=str(id),
             name=node_attr.name,
             description=node_attr.profile,
             model=self.to_model(node_attr.model),

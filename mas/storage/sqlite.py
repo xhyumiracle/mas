@@ -53,12 +53,6 @@ class SqliteStorage(Storage):
         session.close()
         return self._row_to_dict(entry) if entry else None
 
-    # def get_latest_entry_by_caller(self, caller: str) -> Optional[Dict[str, Any]]:
-    #     session = self.Session()
-    #     entry = session.query(Entry).filter_by(caller=caller).order_by(Entry.id.desc()).first()
-    #     session.close()
-    #     return self._row_to_dict(entry) if entry else None
-
     def _row_to_dict(self, entry: Entry) -> Dict[str, Any]:
         return {
             "caller": entry.caller,
@@ -67,5 +61,3 @@ class SqliteStorage(Storage):
             "data": json.loads(entry.data),
             "timestamp": entry.timestamp
         }
-
-# TODO: validate this
