@@ -3,23 +3,17 @@ from typing import List
 import wikipedia
 from bs4 import BeautifulSoup
 import re
-from mas.tool.pool import ToolPool
-import logging
-
-logger = logging.getLogger(__name__)
 
 def fetch_wikipedia_clean(titles: List[str], lang: str = "en") -> dict:
     wikipedia.set_lang(lang)
 
     last_exception = None
     for title in titles:
-        logger.info(f"Searching wikipedia for: {title}")
         try:
             page = wikipedia.page(title, auto_suggest=False, redirect=True)
             html = page.html()
             break
         except (wikipedia.exceptions.DisambiguationError, wikipedia.exceptions.PageError) as e:
-            logger.warning(f"Failed to search wikipedia for: {title}, retrying...")
             last_exception = e
     if last_exception:
         raise last_exception
@@ -87,10 +81,12 @@ def _find_previous_heading(tag):
             return tag.get_text(strip=True)
     return None
 
-@ToolPool.register(
-    name="wikipedia_search_text",
-    description="Use carefully, only when necessary, Searches Wikipedia for a given topic" #  and returns the cleaned text-only content as a dictionary.
-)
+# "description": "Searches Wikipedia for a given topic and returns the cleaned text-only content as a dictionary.",
 def wikipedia_search_text(query: str, lang: str = "en") -> str:
     titles = wikipedia.search(query, results=3, suggestion=False)
     return json.dumps(fetch_wikipedia_clean(titles, lang))
+
+res = wikipedia_search_text("Mercedes Sosa", lang="en")
+# res = wikipedia.summary("Moon and Earth distance")
+
+print(res)
