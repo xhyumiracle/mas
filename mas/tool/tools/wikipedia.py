@@ -89,8 +89,8 @@ def _find_previous_heading(tag):
 
 @ToolPool.register(
     name="wikipedia_search_text",
-    description="Use carefully, only when necessary, Searches Wikipedia for a given topic" #  and returns the cleaned text-only content as a dictionary.
+    description="Searches Wikipedia for a given topic. Use carefully, only when necessary. Truncated by [0:10000]" #  and returns the cleaned text-only content as a dictionary.
 )
 def wikipedia_search_text(query: str, lang: str = "en") -> str:
     titles = wikipedia.search(query, results=3, suggestion=False)
-    return json.dumps(fetch_wikipedia_clean(titles, lang))
+    return json.dumps(fetch_wikipedia_clean(titles, lang))[:10000]
