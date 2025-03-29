@@ -18,32 +18,26 @@ $ pytest
 
 ## Usage
 ```python
-import logging
-from mas.mas import MasFactory
-from mas.orch import MockOrch
-from mas.orch.parser import YamlParser
-from mas.curator import ModelCurator, ToolCurator
-from mas.flow import PocketflowExecutor
-from mas.agent import MockAgent, AgnoAgent
-from mas.tool import TOOLS
-from mas.model import MODELS
-
-logging.basicConfig(level=logging.INFO)
-
 from dotenv import load_dotenv
 load_dotenv()
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
+from mas.mas import MasFactory
+from mas.orch import MockOrch
+from mas.curator import ModelCurator, ToolCurator
+from mas.flow import PocketflowExecutor
+from mas.agent import MockAgent, AgnoAgent
+
+logger = logging.getLogger(__name__)
+
 mas = MasFactory(
-    model_map=MODELS,
-    tool_map=TOOLS,
     cls_Orch=MockOrch,
-    cls_Parser=YamlParser, # optional
     cls_Executor=PocketflowExecutor,
     cls_Agent=MockAgent,
-    cls_Curators={"model": ModelCurator, "tool": ToolCurator},
-    executor_is_chain=True,
+    cls_Curators=[ModelCurator, ToolCurator],
 )
-
 mas.build()
 mas.run("Write a story in George R.R. Martin's style")
 ```
@@ -140,7 +134,7 @@ MAS is designed to be modular and extensible, almost all components are pluggabl
   - modality validation
 - AgentTaskFlow: separating graph with execution flow
   - FlowExecutor: can use any workflow-style framework
-    - SimpleChainExecutor: simple for loop execution
+    - SimpleSequentialExecutor: simple for loop execution
     - PocketflowExecutor
 - Memory: shared memory between agents
 - Message: message definition
@@ -158,7 +152,7 @@ MAS is designed to be modular and extensible, almost all components are pluggabl
 
 ## TODO
 
-- [ ] implement LLM-based orchestrators
+- [X] implement LLM-based orchestrators
 - [ ] add enough tools
 - [ ] add enough models
 - [ ] async flow executor to better support branching-flow
