@@ -17,7 +17,6 @@ mas = MasFactory(
     cls_Executor=PocketflowExecutor,
     cls_Agent=MockAgent,
     cls_Curators=[ModelCurator, ToolCurator],
-    executor_is_chain=True,
 )
 mas.build()
 mas.run("Write a story in George R.R. Martin's style")

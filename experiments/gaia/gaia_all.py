@@ -55,8 +55,8 @@ async def run():
         # Build execution flow
         print("-----------3.Execution Flow----------")
         flow = AgentTaskFlow(
-            agent_cls=AgnoAgent,
-            executor=PocketflowExecutor(is_chain=True),
+            cls_Agent=AgnoAgent,
+            executor=PocketflowExecutor(),
         )
         flow.build(agent_task_graph)
         flow.pprint_flow_order()

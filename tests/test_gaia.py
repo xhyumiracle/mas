@@ -20,7 +20,6 @@ def test_mas():
         cls_Executor=PocketflowExecutor,
         cls_Agent=AgnoAgent,
         cls_Curators=[ModelCurator, ToolCurator],
-        executor_is_chain=True,
     )
     mas.build()
     mas.run(query)
