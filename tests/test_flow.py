@@ -23,8 +23,8 @@ def test_SimpleSequentialFlow():
 
 def test_PocketFlowChainFlow():
 
-    ToolPool.initialize()
-    ModelPool().initialize()
+    ToolPool.get_global()
+    ModelPool().get_global()
 
     flow = AgentTaskFlow(
         cls_Agent=AgnoAgent,
