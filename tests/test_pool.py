@@ -18,15 +18,15 @@ def test_model_pool():
     print("Test Model:", model_pool.get("test_openai"))
     # _agno_run(model_pool.get("test_model"))
 
-def _agno_run(model_cls):
+def _agno_run():
     import json
     from agno.agent import Agent, RunResponse
     from agno.models.openai import OpenAIChat
     from agno.tools.duckduckgo import DuckDuckGoTools
 
     agent = Agent(
-        # model=OpenAIChat(id="gpt-4o"),
-        model=model_cls(),
+        model=OpenAIChat(id="gpt-4o"),
+        
         description="You are an enthusiastic news reporter with a flair for storytelling!",
         tools=[DuckDuckGoTools()],
         show_tool_calls=True,
@@ -68,7 +68,4 @@ messages = [
         files=test_files
         )
 ]
-
-#formatted = model._format_message(messages[1])
-response = model.invoke(messages)
-print(response.choices[0].message.content)
+model.invoke(messages)
