@@ -18,35 +18,68 @@ $ pytest
 
 ## Usage
 ```python
-import logging
-from mas.mas import MasFactory
-from mas.orch import MockOrch
-from mas.orch.parser import YamlParser
-from mas.curator import ModelCurator, ToolCurator
-from mas.flow import PocketflowExecutor
-from mas.agent import MockAgent, AgnoAgent
-from mas.tool import TOOLS
-from mas.model import MODELS
-
-logging.basicConfig(level=logging.INFO)
-
 from dotenv import load_dotenv
 load_dotenv()
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
+from mas.mas import MasFactory
+from mas.orch import MockOrch
+from mas.curator import ModelCurator, ToolCurator
+from mas.flow import PocketflowExecutor
+from mas.agent import MockAgent, AgnoAgent
+
+logger = logging.getLogger(__name__)
+
 mas = MasFactory(
-    model_map=MODELS,
-    tool_map=TOOLS,
     cls_Orch=MockOrch,
-    cls_Parser=YamlParser, # optional
     cls_Executor=PocketflowExecutor,
     cls_Agent=MockAgent,
-    cls_Curators={"model": ModelCurator, "tool": ToolCurator},
-    executor_is_chain=True,
+    cls_Curators=[ModelCurator, ToolCurator],
 )
-
 mas.build()
 mas.run("Write a story in George R.R. Martin's style")
 ```
+
+### Adding Tools
+We provide 2 ways to add tools to the tool pool:
+1. Register as a tool function, using the `@ToolPool.register` decorator
+```python
+from mas.tool.pool import ToolPool
+
+@ToolPool.register(
+    name="echo",
+    description="simply echo the input"
+)
+def echo(query: str) -> str:
+    return query
+```
+2. Register as a tool instance, using the `ToolPool.register` function
+```python
+from agno.tools.duckduckgo import DuckDuckGoTools
+from mas.tool.pool import ToolPool
+
+ToolPool.register(
+    name="duckduckgo",
+    description="web search through duckduckgo"
+)(DuckDuckGoTools())
+```
+
+> hint: To test your tool, use `pytest tests/test_tool.py -s`
+
+### Adding Models
+Register using the `@ModelPool.register` decorator
+```python
+from agno.models.google.gemini import Gemini
+from mas.model.pool import ModelPool
+
+@ModelPool.register(name="gemini", description="Gemini")
+class TestModel(Gemini):
+    pass
+```
+
+> hint: To test your tool, use `pytest tests/test_model.py -s`
 
 ## Introduction
 ![MAS framework](assets/arch.png)
@@ -101,7 +134,7 @@ MAS is designed to be modular and extensible, almost all components are pluggabl
   - modality validation
 - AgentTaskFlow: separating graph with execution flow
   - FlowExecutor: can use any workflow-style framework
-    - SimpleChainExecutor: simple for loop execution
+    - SimpleSequentialExecutor: simple for loop execution
     - PocketflowExecutor
 - Memory: shared memory between agents
 - Message: message definition
@@ -119,7 +152,7 @@ MAS is designed to be modular and extensible, almost all components are pluggabl
 
 ## TODO
 
-- [ ] implement LLM-based orchestrators
+- [X] implement LLM-based orchestrators
 - [ ] add enough tools
 - [ ] add enough models
 - [ ] async flow executor to better support branching-flow

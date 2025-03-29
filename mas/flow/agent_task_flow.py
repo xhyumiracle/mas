@@ -15,6 +15,8 @@ from mas.model.pool import ModelPool
 from mas.storage import InMemoryStorage
 from mas.tool.pool import ToolPool
 
+logger = logging.getLogger(__name__)
+
 # TODO: memory should be in flow or executor? maybe base executor
 '''
 Flow:
@@ -34,25 +36,18 @@ v2:
 '''
 class AgentTaskFlow(BaseModel):
     executor: FlowExecutor
-    agent_cls: Type[Agent]
+    cls_Agent: Type[Agent]
 
     graph: Optional[AgentTaskGraph] = None
     memory: Optional[FlowMemory] = FlowMemory(storage=InMemoryStorage())
-    agents: Optional[List[Agent]] = []
-
-    def build_chain(self, G: AgentTaskGraph):
-
-        self.executor.set_execution_chain(list(G.topological_sort()))
 
     '''add {node_id: Agent(node_attr)} to each graph node'''
     def build_agents_on_graph(self, G: AgentTaskGraph):
-        nx.set_node_attributes(G, {node_id: self.agent_cls(id=node_id, node_attr=NodeAttr(**attr)) for node_id, attr in G.nodes(data=True)}, name='agent')
+        nx.set_node_attributes(G, {node_id: self.cls_Agent(id=node_id, node_attr=NodeAttr(**attr)) for node_id, attr in G.nodes(data=True)}, name='agent')
         
     def build(self, G: AgentTaskGraph):
         self.build_agents_on_graph(G)
         self.graph = G
-        if self.executor.is_chain:
-            self.build_chain(G)
     
     def run(self):
         return self.executor.run(self.graph, self.memory)
@@ -64,7 +59,7 @@ class AgentTaskFlow(BaseModel):
         return self.run()
 
     def pprint_flow_order(self):
-        logging.info(self.executor.get_execution_chain_str())
+        logger.info(self.executor.get_execution_order_str())
     '''
     for pydantic, resolve AgentTaskGraph compatiblity issue
     '''

@@ -4,6 +4,8 @@ from typing import List, Dict, Sequence, Optional, Union, Any
 from pydantic import BaseModel
 from agno.media import Audio, File, Image, Video
 
+logger = logging.getLogger(__name__)
+
 class Message(BaseModel):
     # system, user, assistant, or tool
     role: str
@@ -40,7 +42,7 @@ class Message(BaseModel):
         return message_dict
     
     def pprint(self):
-        logging.info(json.dumps(self.to_dict(), indent=2))
+        logger.info(json.dumps(self.to_dict(), indent=2))
         
 Messages = Optional[List[Union[Dict, Message]]]
 
@@ -49,6 +51,6 @@ def pprint_messages(messages: Messages) -> None:
     if messages is None:
         logging.warning("No messages to display.")
     else:
-        logging.info("\n=======Messages=====\n")
-        logging.info(json.dumps([m.to_dict() for m in messages], indent=2))
-        logging.info("=======End=======\n")
+        logger.info("\n=======Messages=====\n")
+        logger.info(json.dumps([m.to_dict() for m in messages], indent=2))
+        logger.info("\n=======End=======\n")

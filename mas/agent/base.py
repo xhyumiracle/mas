@@ -6,39 +6,40 @@ from agno.tools import Toolkit
 
 from mas.message import Message
 from mas.graph.types import NodeId
-from mas.model import ModelPool
-from mas.tool import ToolPool
 
-# enforce setting id
+# don't import to avoid circular import
+# from mas.model import ModelPool
+# from mas.tool import ToolPool
+
 @dataclass
 class Agent(ABC):
     id: NodeId
-    _model_pool: ModelPool = None  # Class variable, shared across subclasses
-    _tool_pool: ToolPool = None  # Class variable, shared across subclasses
+    _model_pool = None  # Class variable, shared across subclasses
+    _tool_pool = None  # Class variable, shared across subclasses
 
     @classmethod
-    def set_model_pool(cls, model_pool: ModelPool):
+    def set_model_pool(cls, model_pool):
         cls._model_pool = model_pool
 
     @classmethod
-    def set_tool_pool(cls, tool_pool: ToolPool):
+    def set_tool_pool(cls, tool_pool):
         cls._tool_pool = tool_pool
 
     @classmethod
-    def get_model_pool(cls) -> ModelPool:
+    def get_model_pool(cls):
         if cls._model_pool is None:
             raise ValueError("ModelPool not set. Call set_model_pool first.")
         return cls._model_pool
     
     @classmethod
-    def get_tool_pool(cls) -> ToolPool:
+    def get_tool_pool(cls):
         if cls._tool_pool is None:
             raise ValueError("ToolPool not set. Call set_tool_pool first.")
         return cls._tool_pool
     
     @classmethod
     def to_model(cls, model_str) -> Model:
-        return cls.get_model_pool().get(model_str)
+        return cls.get_model_pool().get(model_str)()
     
     @classmethod
     def to_tools(cls, tool_str_list: List[str]) -> Optional[List[Toolkit]]:

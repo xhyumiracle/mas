@@ -4,14 +4,18 @@ import logging
 from mas.curator.base import Curator
 from mas.graph.agent_task_graph import AgentTaskGraph
 
+logger = logging.getLogger(__name__)
 
 class ToolCurator(Curator):
+    def remove_duplicated(self, tools: List[str]) -> List[str]:
+        return list(set(tools))
+
     def curate_tools(self, tools: List[str]) -> List[str]:
-        # TODO: implement curation logic
-        return tools
+        _tools = self.remove_duplicated(tools)
+        return _tools
     
     def curate(self, G: AgentTaskGraph) -> AgentTaskGraph:
-        logging.info("Curating tools... skipped")
-        # for _, attr in G.nodes(data=True):
-        #     self.curate_tools(attr["tools"])
+        logger.info("Curating tools... skipped")
+        for _, attr in G.nodes(data=True):
+            self.curate_tools(attr["tools"])
         return G

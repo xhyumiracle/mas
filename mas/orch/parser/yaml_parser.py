@@ -1,12 +1,16 @@
 from typing import List, Tuple
 from mas.graph.agent_task_graph import AgentTaskGraph, EdgeAttr, NodeAttr, NodeId
 from mas.orch.parser import Parser
+import yaml
 
 class YamlParser(Parser):
-    def parse_from_path(self, filename) -> AgentTaskGraph:
-        import yaml
+    def parse_from_path(self, filename: str) -> AgentTaskGraph:
+        """Parse a YAML file from a given path into an AgentTaskGraph."""
         with open(filename, 'r') as file:
-            return self.parse_from_string(yaml.safe_load(file))
+            data = yaml.safe_load(file)
+            if not data:
+                raise ValueError(f"Failed to load YAML from {filename} or file is empty")
+            return self.parse_from_string(data)
     
     def parse_from_string(self, yaml) -> AgentTaskGraph:
         '''parse from yaml string to AgentTaskGraph'''
@@ -27,7 +31,7 @@ class YamlParser(Parser):
             model=agent_yaml['model'],
             input_formats=agent_yaml.get('input', ['text']),
             output_formats=agent_yaml.get('output', ['text']),
-            tools=agent_yaml.get('tools')
+            tools=agent_yaml.get('tools', [])
         )
 
     def to_edges(self, edge_raw) -> List[Tuple[NodeId, NodeId, EdgeAttr]]:
@@ -43,3 +47,11 @@ class YamlParser(Parser):
         # else: # v0: DAG only
             # edges.append(node_dict[fr], node_dict[to], key=type_str)
         return edges
+
+if __name__ == "__main__":
+    parser = YamlParser()
+    try:
+        graph = parser.parse_from_path('tests/data/graph.0.yaml')
+        print(graph)
+    except Exception as e:
+        print(f"Error parsing YAML: {e}")
