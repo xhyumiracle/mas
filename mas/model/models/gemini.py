@@ -4,4 +4,5 @@ from mas.model.pool import ModelPool
 
 @ModelPool.register(name="gemini", description="Gemini")
 class Gemini(Gemini):
-    pass
+    def __init__(self):
+        super().__init__(id="gemini-2.0-flash")
