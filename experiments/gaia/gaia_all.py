@@ -21,27 +21,22 @@ async def run():
         logger.error("Failed to load GAIA data")
         return
     
+    # Initialize orchestrator with current question
+    orch = LLMOrch()
+
     # Initialize curators once
     curators = [ToolCurator(), ModelCurator()]
     
     # Process each question
     results = []
-    
-    # Initialize orchestrator with current question
-    orch = LLMOrch(
-        model_pool=model_pool,
-        tool_pool=tool_pool
-    )
 
     for index, item in enumerate(gaia_data):
         query = item['Question']
         print(f"\n====== Processing Question {index+1}/{len(gaia_data)} ======")
         print(f"Question: {query}")
         
-        orch.generate(query=query)
-        
         # Generate agent task graph
-        agent_task_graph = orch.generate_by_message()
+        agent_task_graph = orch.generate(query=query)
         print("-----------1.Agent Task Graph----------")
         agent_task_graph.pprint()
         
@@ -55,8 +50,8 @@ async def run():
         # Build execution flow
         print("-----------3.Execution Flow----------")
         flow = AgentTaskFlow(
-            agent_cls=AgnoAgent,
-            executor=PocketflowExecutor(is_chain=True),
+            cls_Agent=AgnoAgent,
+            executor=PocketflowExecutor(),
         )
         flow.build(agent_task_graph)
         flow.pprint_flow_order()

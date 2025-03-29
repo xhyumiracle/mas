@@ -1,6 +1,7 @@
 import logging
 from typing import List
 from mas.agent import Agent
+from mas.graph.types import NodeId
 from mas.message import Message, pprint_messages
 from mas.memory.memory import FlowMemory
 from mas.graph.agent_task_graph import AgentTaskGraph
@@ -10,11 +11,12 @@ from pocketflow import Node, BatchNode, Flow
 logger = logging.getLogger(__name__)
 
 class PocketflowExecutor(FlowExecutor):
+    sequential_order: List[NodeId] = []
 
     def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
 
-        if not self.is_chain:
-            raise Exception("PocketflowExecutor currently only supports chain execution")
+        self.sequential_order = list(graph.topological_sort())
+
         '''
         shared memory
         '''
@@ -26,12 +28,6 @@ class PocketflowExecutor(FlowExecutor):
         '''
         create agents and nodes
         '''
-        # nodes = {}
-        # for id in graph.nodes.keys():
-        #     node_attr = graph.get_node_attr(id)
-        #     # agent = MockAgent(id=id, node_attr=node_attr)
-        #     agent = AgnoAgent(id=id, node_attr=node_attr)
-        #     nodes[id] = FlowNode(agent, node_attr.prompt, node_attr.input_formats, node_attr.output_formats)
         nodes = {
             node_id: FlowNode(attr["agent"], attr["prompt"], attr["input_formats"], attr["output_formats"])
             for node_id, attr in graph.nodes(data=True)
@@ -42,7 +38,7 @@ class PocketflowExecutor(FlowExecutor):
         '''
         start_node = None
         previous_id = -1
-        for id in self.execution_chain:
+        for id in self.sequential_order:
             if previous_id == -1:
                 start_node = nodes[id]
             else:
@@ -55,7 +51,9 @@ class PocketflowExecutor(FlowExecutor):
         flow.run(shared)
 
         return shared["final_output_message"]
-        
+    
+    def get_execution_order_str(self):
+        return '->'.join([str(i) for i in self.sequential_order])
 
 class FlowNode(Node):
     # retry_prompt = "Please adjust your output based on the feedback from the reviewer."
