@@ -32,3 +32,5 @@ def test_PocketFlowChainFlow():
     )
     flow.build(build_graph_from_yaml())
     flow.run()
+
+test_PocketFlowChainFlow()
