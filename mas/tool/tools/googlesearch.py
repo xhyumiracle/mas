@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 @ToolPool.register(
     name="google_search",
-    description="Performs a Google search for a given query and returns a list of search results, including titles, URLs, and descriptions."
+    description="Performs Google Search to retrieve real time information. Returns a list of search results, including their titles, URLs, and descriptions."
 )
 def google_search(query: str, max_results: int = 5, language: Optional[str] = None, proxy: Optional[str] = None) -> str:
     """

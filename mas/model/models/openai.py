@@ -69,7 +69,7 @@ def file_to_message(files: Sequence[File]) -> List[Dict[str, Any]]:
 
             # Add file reference to message content
             file_messages.append({
-                "type": "file",
+                "type": "input_file",
                 "file": {"file_id": file_id}
             })
         except httpx.RequestError as e:
@@ -83,10 +83,10 @@ def file_to_message(files: Sequence[File]) -> List[Dict[str, Any]]:
 
 
 
-@ModelPool.register(name="gpt-4o", description="OpenAI GPT-4O")
-class GPT4o(OpenAIChat):
-    def __init__(self):
-        super().__init__(id="gpt-4o")
+@ModelPool.register(name="openai", description="OpenAI model family")
+class Openai(OpenAIChat):
+    def __init__(self, id="gpt-4o"):
+        super().__init__(id=id)
 
     # modified to deal with files
     def _format_message(self, message: Message) -> Dict[str, Any]:
@@ -116,7 +116,7 @@ class GPT4o(OpenAIChat):
         ):
 
                 if isinstance(message.content, str):
-                    message_dict["content"] = [{"type": "text", "text": message.content}]
+                    message_dict["content"] = [{"type": "input_text", "text": message.content}]
                 elif message.content is None:
                     message_dict["content"] = []
                 if message.files is not None:
@@ -142,4 +142,30 @@ class GPT4o(OpenAIChat):
         return message_dict
 
 
+    '''for test purpose
+    def invoke(self):
 
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        test_files = [
+            File(filepath="/Users/xin/Downloads/gaia benchmark.pdf"),  # File from local path
+            File(url="https://www.frouah.com/finance%20notes/Black%20Scholes%20PDE.pdf"),  # File from URL
+        ]
+        messages = [
+            Message(role="system", content="You are a helpful assistant that can read PDFs and search the web"),
+            Message(
+                role="user",
+                content=[
+                    {"type": "input_text", "text": "Summarize the content of the pdfs, and search the web for the most up-to-date ranking of multi-agent systems based on how they perform on the gaia bencmark."}
+                ] + file_to_message(test_files)
+        )
+    ]
+        
+        response = client.responses.create(
+            model="gpt-4o",
+            #tools=[{"type": "web_search_preview"}],
+            input=messages
+        )
+        print(response.output_text)
+
+    '''
+    

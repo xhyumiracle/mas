@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 from mas.tool.pool import ToolPool
 
 @ToolPool.register(
-    name="fetch_url",
-    description="Fetches the content of a given URL and extracts the main text from the webpage. Only works for retrieving html text content and does not work for javascript."
+    name="urlreader",
+    description="Reads the content of a given URL and extracts the main text from the webpage. Only retrieves text from html content and does not work for javascript."
 )
 def fetch_url(url: str, timeout: int = 10, headers: dict = None) -> str:
     """

@@ -70,7 +70,7 @@ class ModelPool(Pool[ModelType]):
         return cls._global
     
     @classmethod
-    def get(cls, name):
+    def get_model(cls, name):
         pool = cls.get_global()
         model_class = Pool.get(pool, name)  # Explicitly call Pool.get()
         if model_class is None:

@@ -1,7 +1,5 @@
 from mas.model.pool import ModelPool
 from mas.tool import ToolPool
-from agno.media import File
-from agno.models.message import Message
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -47,25 +45,4 @@ def _agno_run():
 
     pprint_messages(response.messages)
 
-'''
-modelpool = ModelPool.get_global()
-model_class = modelpool.get(name="gpt-4o")
-model = model_class()
-'''
-model = ModelPool.get("gpt-4o")
-# modelpool.get(name="gpt-4o") call is returning the TestModel class rather than an instance of TestModel
 
-
-test_files = [
-    File(filepath="/Users/xin/Downloads/gaia benchmark.pdf"),  # File from local path
-    File(url="https://www.frouah.com/finance%20notes/Black%20Scholes%20PDE.pdf"),  # File from URL
-]
-messages = [
-    Message(role="system", content="You are a helpful assistant that can read PDFs"),
-    Message(
-        role="user",
-        content="Summarize the content of the pdfs",
-        files=test_files
-        )
-]
-model.invoke(messages)
