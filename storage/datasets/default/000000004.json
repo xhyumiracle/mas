@@ -1,0 +1,19 @@
+{
+  "url": "https://ai.google.dev/api",
+  "title": "Gemini API reference  |  Google AI for Developers",
+  "paragraphs": [
+    "The Gemini API lets you access the latest generative models from Google. This\nAPI reference provides detailed information for the classes and methods\navailable in the Gemini API SDKs. Pick a language and follow the setup steps\nto get started building.",
+    "Python\n  JavaScript\n  Go",
+    "Using Python 3.9+, install the\ngoogle-genai package\nusing the following pip command:",
+    "Use the\ngenerateContent method\nto send a request to the Gemini API.",
+    "If you're just getting started, check out the following guides, which will help\nyou understand the Gemini API programming model:",
+    "You might also want to check out the capabilities guides, which introduce different\nGemini API features and provide code examples:",
+    "Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License. For details, see the Google Developers Site Policies. Java is a registered trademark of Oracle and/or its affiliates.",
+    "Last updated 2025-04-01 UTC."
+  ],
+  "code_blocks": [
+    "pip install -q -U google-genai",
+    "from google import genai\n\nclient = genai.Client(api_key=\"YOUR_API_KEY\")\n\nresponse = client.models.generate_content(\n    model=\"gemini-2.0-flash\", contents=\"Explain how AI works in a few words\"\n)\nprint(response.text)"
+  ],
+  "tables": []
+}

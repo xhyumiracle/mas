@@ -1,0 +1,24 @@
+{
+  "id": "CLNBy73q2j5KsBW",
+  "unique_key": "https://ai.google.dev/api",
+  "order_no": null,
+  "handled_at": "2025-04-01 18:41:06.570693+00:00",
+  "request": {
+    "url": "https://ai.google.dev/api",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://ai.google.dev/api",
+    "handled_at": "2025-04-01 18:41:06.570693+00:00",
+    "unique_key": "https://ai.google.dev/api",
+    "id": "CLNBy73q2j5KsBW"
+  }
+}

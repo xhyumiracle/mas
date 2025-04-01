@@ -1,0 +1,23 @@
+{
+  "id": "8XJeFRWUlKJQQpF",
+  "unique_key": "https://ai.google.dev/gemini-api/docs/pricing?hl=pt-br",
+  "order_no": "1743532873816.588000",
+  "handled_at": null,
+  "request": {
+    "url": "https://ai.google.dev/gemini-api/docs/pricing?hl=pt-br",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 2
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "unique_key": "https://ai.google.dev/gemini-api/docs/pricing?hl=pt-br",
+    "id": "8XJeFRWUlKJQQpF"
+  }
+}

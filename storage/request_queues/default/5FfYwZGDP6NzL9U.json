@@ -1,0 +1,23 @@
+{
+  "id": "5FfYwZGDP6NzL9U",
+  "unique_key": "https://ai.google.dev/gemini-api/docs/document-processing?hl=fr&lang=python",
+  "order_no": "1743532862406.619000",
+  "handled_at": null,
+  "request": {
+    "url": "https://ai.google.dev/gemini-api/docs/document-processing?lang=python&hl=fr",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "unique_key": "https://ai.google.dev/gemini-api/docs/document-processing?hl=fr&lang=python",
+    "id": "5FfYwZGDP6NzL9U"
+  }
+}

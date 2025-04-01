@@ -1,0 +1,23 @@
+{
+  "id": "37BNmNK39m6qkcN",
+  "unique_key": "https://ai.google.dev/gemini-api/tutorials/web-app",
+  "order_no": "1743532862440.893000",
+  "handled_at": null,
+  "request": {
+    "url": "https://ai.google.dev/gemini-api/tutorials/web-app",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "unique_key": "https://ai.google.dev/gemini-api/tutorials/web-app",
+    "id": "37BNmNK39m6qkcN"
+  }
+}
