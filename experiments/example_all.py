@@ -48,8 +48,8 @@ async def run():
 
     flow = AgentTaskFlow(
         # agent_cls=AgnoAgent,
-        agent_cls=MockAgent,
-        executor=PocketflowExecutor(is_chain=True),
+        cls_Agent=MockAgent,
+        executor=PocketflowExecutor(),
     )
     flow.build(agent_task_graph)
 

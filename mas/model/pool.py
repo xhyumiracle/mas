@@ -15,10 +15,12 @@ class ModelPool(Pool[ModelType]):
 
     @classmethod
     def initialize(cls, load_builtin=True, ext_dir: str = None) -> ModelPool:
+        if cls._global is not None:
+            return cls._global
+        
         pool = cls()
         
         ''' set this instance to global registry context and Agent class '''
-
         cls._global = pool
         Agent.set_model_pool(pool)
 
@@ -63,6 +65,15 @@ class ModelPool(Pool[ModelType]):
     @classmethod
     def get_global(cls) -> ModelPool:
         if cls._global is None:
-            logger.info("ModelPool._global is not initialized, initialize now")
-            ModelPool.initialize()
+            logger.info("ModelPool._global is not initialized, initializing now")
+            ModelPool.initialize()  # This will set cls._global
         return cls._global
+    
+    @classmethod
+    def get_model(cls, name):
+        pool = cls.get_global()
+        model_class = Pool.get(pool, name)  # Explicitly call Pool.get()
+        if model_class is None:
+            raise ValueError(f"No model found with name '{name}'")
+        return model_class()
+    # model = ModelPool.get("gpt-4o")

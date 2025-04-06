@@ -1,0 +1,24 @@
+{
+  "id": "8pDzFJpYAKSgl5M",
+  "unique_key": "https://ai.google.dev/pricing",
+  "order_no": null,
+  "handled_at": "2025-04-01 18:41:13.844504+00:00",
+  "request": {
+    "url": "https://ai.google.dev/pricing",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://ai.google.dev/gemini-api/docs/pricing",
+    "handled_at": "2025-04-01 18:41:13.844504+00:00",
+    "unique_key": "https://ai.google.dev/pricing",
+    "id": "8pDzFJpYAKSgl5M"
+  }
+}

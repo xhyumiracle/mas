@@ -1,0 +1,24 @@
+{
+  "id": "ny8kKQvTGzXuMoz",
+  "unique_key": "https://ai.google.dev",
+  "order_no": null,
+  "handled_at": "2025-04-01 18:41:04.630050+00:00",
+  "request": {
+    "url": "https://ai.google.dev/",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://ai.google.dev/",
+    "handled_at": "2025-04-01 18:41:04.630050+00:00",
+    "unique_key": "https://ai.google.dev",
+    "id": "ny8kKQvTGzXuMoz"
+  }
+}

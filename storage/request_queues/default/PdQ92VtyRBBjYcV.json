@@ -1,0 +1,23 @@
+{
+  "id": "PdQ92VtyRBBjYcV",
+  "unique_key": "https://ai.google.dev/gemma/docs",
+  "order_no": "1743532862401.004000",
+  "handled_at": null,
+  "request": {
+    "url": "https://ai.google.dev/gemma/docs",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "unique_key": "https://ai.google.dev/gemma/docs",
+    "id": "PdQ92VtyRBBjYcV"
+  }
+}

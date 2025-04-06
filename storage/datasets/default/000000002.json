@@ -1,0 +1,25 @@
+{
+  "url": "https://ai.google.dev/gemini-api/docs",
+  "title": "Gemini API  |  Google AI for Developers",
+  "paragraphs": [
+    "Get a Gemini API key and make your first API request in minutes.",
+    "Use Gemini in Google AI Studio",
+    "2.5 Pro\n          experiment",
+    "Our most powerful thinking model with features for complex reasoning and much more",
+    "2.0 Flash\n          spark",
+    "Our newest multimodal model, with next generation features and improved\n          capabilities",
+    "2.0 Flash-Lite\n          bolt",
+    "Our fastest and most cost-efficient multimodal model with great performance\n          for high-frequency tasks",
+    "Generate and edit highly contextual images natively with Gemini 2.0 Flash.",
+    "Input millions of tokens to Gemini models and derive understanding from unstructured images, videos, and documents.",
+    "Constrain Gemini to respond with JSON, a structured data format suitable for automated processing.",
+    "Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License. For details, see the Google Developers Site Policies. Java is a registered trademark of Oracle and/or its affiliates.",
+    "Last updated 2025-04-01 UTC."
+  ],
+  "code_blocks": [
+    "from google import genai\n\nclient = genai.Client(api_key=\"YOUR_API_KEY\")\n\nresponse = client.models.generate_content(\n    model=\"gemini-2.0-flash\",\n    contents=\"Explain how AI works\",\n)\n\nprint(response.text)",
+    "import { GoogleGenAI } from \"@google/genai\";\n\nconst ai = new GoogleGenAI({ apiKey: \"YOUR_API_KEY\" });\n\nasync function main() {\n  const response = await ai.models.generateContent({\n    model: \"gemini-2.0-flash\",\n    contents: \"Explain how AI works\",\n  });\n  console.log(response.text);\n}\n\nawait main();",
+    "curl \"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=YOUR_API_KEY\" \\\n  -H 'Content-Type: application/json' \\\n  -X POST \\\n  -d '{\n    \"contents\": [\n      {\n        \"parts\": [\n          {\n            \"text\": \"Explain how AI works in a few words\"\n          }\n        ]\n      }\n    ]\n  }'"
+  ],
+  "tables": []
+}

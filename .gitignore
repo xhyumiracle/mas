@@ -6,3 +6,4 @@ __pycache__
 test
 mas.egg-info
 .env
+**/test_gemini_agno.py

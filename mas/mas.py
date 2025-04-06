@@ -20,7 +20,6 @@ class MasFactory:
     cls_Curators: List[Type[Curator]]
     model_pool: ModelPool = field(default_factory=ModelPool.get_global)
     tool_pool: ToolPool = field(default_factory=ToolPool.get_global)
-    executor_is_chain: bool = True
 
     def build(self):
         ''' Initialize orchestrator, i.e. the agent task graph builder '''
@@ -37,8 +36,8 @@ class MasFactory:
         ''' Initialize flow executor '''
 
         self.flow = AgentTaskFlow(
-            agent_cls=self.cls_Agent,
-            executor=self.cls_Executor(is_chain=self.executor_is_chain),
+            cls_Agent=self.cls_Agent,
+            executor=self.cls_Executor(),
         )
 
     def run(self, query: Union[str, Message]) -> Message:

@@ -1,26 +1,30 @@
 from mas.model.pool import ModelPool
 from mas.tool import ToolPool
+from dotenv import load_dotenv
+load_dotenv()
 
 def test_tool_pool():
-    tool_pool = ToolPool().initialize(load_builtin=True, ext_dir="tests_artifacts/tools")
+    tool_pool = ToolPool().get_global()
+    tool_pool.autoload(dir="tests_artifacts/tools")
     print("Loaded tools:", tool_pool.list())
     print("Search result:", tool_pool.get("test_tool")("hi"))
 
 def test_model_pool():
-    model_pool = ModelPool().initialize(load_builtin=True, ext_dir="tests_artifacts/models")
+    model_pool = ModelPool().get_global()
+    model_pool.autoload(dir="tests_artifacts/models")
     print("Loaded models:", model_pool.list())
     print("Test Model:", model_pool.get("test_openai"))
     # _agno_run(model_pool.get("test_model"))
 
-def _agno_run(model_cls):
+def _agno_run():
     import json
     from agno.agent import Agent, RunResponse
     from agno.models.openai import OpenAIChat
     from agno.tools.duckduckgo import DuckDuckGoTools
 
     agent = Agent(
-        # model=OpenAIChat(id="gpt-4o"),
-        model=model_cls(),
+        model=OpenAIChat(id="gpt-4o"),
+        
         description="You are an enthusiastic news reporter with a flair for storytelling!",
         tools=[DuckDuckGoTools()],
         show_tool_calls=True,
@@ -40,3 +44,5 @@ def _agno_run(model_cls):
             print("=======End=======\n")
 
     pprint_messages(response.messages)
+
+
