@@ -4,6 +4,13 @@
 
 - setup
 
+> requirements: python>=3.11
+
+```base
+$ conda create -n mas python=3.11
+$ conda activate mas
+```
+
 ```bash
 $ pip install -r requirements.txt
 ```
