@@ -169,8 +169,3 @@ class Openai(OpenAIChat):
 class GPT4o(Openai):
     def __init__(self, id="gpt-4o"):
         super().__init__(id=id)
-
-@ModelPool.register(name="gpt-3.5-turbo", description="OpenAI GPT-3.5-turbo")
-class GPT35Turbo(Openai):
-    def __init__(self, id="gpt-3.5-turbo"):
-        super().__init__(id=id)
