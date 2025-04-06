@@ -82,11 +82,7 @@ def file_to_message(files: Sequence[File]) -> List[Dict[str, Any]]:
     return file_messages
 
 
-
-@ModelPool.register(name="openai", description="OpenAI model family")
 class Openai(OpenAIChat):
-    def __init__(self, id="gpt-4o"):
-        super().__init__(id=id)
 
     # modified to deal with files
     def _format_message(self, message: Message) -> Dict[str, Any]:
@@ -168,4 +164,13 @@ class Openai(OpenAIChat):
         print(response.output_text)
 
     '''
-    
+
+@ModelPool.register(name="gpt-4o", description="OpenAI GPT-4O")
+class GPT4o(Openai):
+    def __init__(self, id="gpt-4o"):
+        super().__init__(id=id)
+
+@ModelPool.register(name="gpt-3.5-turbo", description="OpenAI GPT-3.5-turbo")
+class GPT35Turbo(Openai):
+    def __init__(self, id="gpt-3.5-turbo"):
+        super().__init__(id=id)
