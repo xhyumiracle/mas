@@ -35,7 +35,12 @@ class Workflow(BaseModel):
 @dataclass
 class LLMOrch(Orchestrator):
     base_model: str = 'gpt-4o'  # More generally: assume this is the LLM client or interface
-    client = OpenAI(base_url=os.getenv('OPENAI_BASE_URL'), api_key=os.getenv('OPENAI_API_KEY')) # necessary to define it here otherwise openai's chat completion will return error
+    client = OpenAI(
+        base_url=os.getenv('OPENAI_BASE_URL'), 
+        api_key=os.getenv('OPENAI_API_KEY'),
+        timeout=30.0,       # default is 10s
+        max_retries=5,      # default is 2
+    ) # necessary to define it here otherwise openai's chat completion will return error
     updated_prompt: str = field(init=False)
 
     def __post_init__(self):
