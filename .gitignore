@@ -7,3 +7,4 @@ test
 mas.egg-info
 .env
 **/test_gemini_agno.py
+.venv/
