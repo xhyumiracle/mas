@@ -41,36 +41,30 @@ class MasFactory:
         )
 
     def run(self, query: Union[str, Message]) -> Message:
-        ''' Generate agent task graph & Agents '''
-
-        agent_task_graph = self.orch.generate(query)
 
         logger.info("\n----------------1.Agent Task Graph---------------\n")
-        
-        for curator  in self.curators:
-            agent_task_graph = curator.curate(agent_task_graph)
 
-        agent_task_graph.pprint()
+        ''' Generate the task graph '''
+
+        task_graph = self.orch.generate(query)
+
+        task_graph.pprint()
         # agent_task_graph.plot()
 
         logger.info("\n----------------2.Curations---------------\n")
 
+        agent_task_graph = task_graph
         for curator  in self.curators:
             agent_task_graph = curator.curate(agent_task_graph)
 
         agent_task_graph.pprint()
 
-        logger.info("\n----------------3.Execution Flow---------------\n")
+        logger.info("\n----------------3.Run Tasks---------------\n")
 
         self.flow.build(agent_task_graph)
 
-        ''' Print the flow order '''
-
-        self.flow.pprint_flow_order()
-
-        logger.info("\n----------------4.Run Tasks---------------\n")
-
         response_message: Message = self.flow.run() #TODO: not sure format
+        
         logger.info("\n----------------Final Answer---------------\n")
         response_message.pprint()
         return response_message

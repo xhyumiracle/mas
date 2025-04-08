@@ -9,7 +9,3 @@ class FlowExecutor(ABC):
     @abstractmethod
     def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
         raise NotImplementedError
-    
-    @abstractmethod
-    def get_execution_order_str(self):
-        raise NotImplementedError
