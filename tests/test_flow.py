@@ -3,7 +3,7 @@ from mas.agent.base import Agent
 from mas.agent.mock import MockAgent
 from mas.flow.agent_task_flow import AgentTaskFlow
 from mas.flow.executor.pocketflow import PocketflowExecutor
-from mas.flow.executor.simple_sequential import SimpleSequentialExecutor
+from mas.flow.executor.sequential import SequentialExecutor
 from mas.orch.parser import YamlParser
 from mas.tool import ToolPool
 from mas.model import ModelPool
@@ -16,7 +16,7 @@ def build_graph_from_yaml():
 def test_SimpleSequentialFlow():
     flow = AgentTaskFlow(
         cls_Agent=MockAgent,
-        executor=SimpleSequentialExecutor(),
+        executor=SequentialExecutor(),
     )
     flow.build(build_graph_from_yaml())
     flow.run()

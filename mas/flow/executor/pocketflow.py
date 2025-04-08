@@ -52,8 +52,6 @@ class PocketflowExecutor(FlowExecutor):
 
         return shared["final_output_message"]
     
-    def get_execution_order_str(self):
-        return '->'.join([str(i) for i in self.sequential_order])
 
 class FlowNode(Node):
     # retry_prompt = "Please adjust your output based on the feedback from the reviewer."

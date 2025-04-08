@@ -1,4 +1,4 @@
 from .executor.base import FlowExecutor
 from .executor.pocketflow import PocketflowExecutor
-from .executor.simple_sequential import SimpleSequentialExecutor
+from .executor.sequential import SequentialExecutor
 from .agent_task_flow import AgentTaskFlow

@@ -49,17 +49,10 @@ class AgentTaskFlow(BaseModel):
         self.build_agents_on_graph(G)
         self.graph = G
     
+    # TODO: run stream
     def run(self):
         return self.executor.run(self.graph, self.memory)
-    
-    # TODO: run stream
 
-    def build_and_run(self):
-        self.build()
-        return self.run()
-
-    def pprint_flow_order(self):
-        logger.info(self.executor.get_execution_order_str())
     '''
     for pydantic, resolve AgentTaskGraph compatiblity issue
     '''
