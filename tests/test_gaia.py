@@ -23,3 +23,5 @@ def test_mas():
     )
     mas.build()
     mas.run(query)
+
+test_mas()
