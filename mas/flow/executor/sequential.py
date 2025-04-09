@@ -28,9 +28,10 @@ class SequentialExecutor(FlowExecutor):
             request = prep_request(node_id, prompt, shared)
             # pprint_messages(request)
             response = exec(node_id, agent, request, prompt, shared)
-            response.pprint()
+            # response.pprint()
+            yield response
         
-        return response
+        # return response
 
     # retry_prompt = "Please adjust your output based on the feedback from the reviewer."
 

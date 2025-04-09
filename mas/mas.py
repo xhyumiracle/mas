@@ -63,8 +63,10 @@ class MasFactory:
 
         self.flow.build(agent_task_graph)
 
-        response_message: Message = self.flow.run() #TODO: not sure format
+        for response in self.flow.run():
+            response.pprint()
+            latest_response = response
         
         logger.info("\n----------------Final Answer---------------\n")
-        response_message.pprint()
-        return response_message
+        latest_response.pprint()
+        return latest_response

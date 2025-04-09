@@ -1,6 +1,7 @@
 import asyncio
 
 from dotenv import load_dotenv
+from mas.flow.executor.sequential import SequentialExecutor
 load_dotenv()
 
 import logging
@@ -8,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 
 from mas.orch import Orchestrator, MockOrch
 from mas.curator import ModelCurator, ToolCurator
-from mas.flow import AgentTaskFlow, PocketflowExecutor
+from mas.flow import AgentTaskFlow
 from mas.agent import Agent, MockAgent, AgnoAgent
 from mas.message import Message
 
@@ -49,12 +50,12 @@ async def run():
     flow = AgentTaskFlow(
         # agent_cls=AgnoAgent,
         cls_Agent=MockAgent,
-        executor=PocketflowExecutor(),
+        executor=SequentialExecutor(),
     )
     flow.build(agent_task_graph)
 
-    response_message: Message = flow.run() #TODO: not sure format
-    response_message.pprint()
+    for response in flow.run():
+        response.pprint()
 
 if __name__ == "__main__":
     asyncio.run(run())
