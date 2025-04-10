@@ -36,16 +36,6 @@ class AgentTaskGraph(nx.DiGraph):
                 raise InvalidNodeError(f"Node {to} in edge [{fr} -> {to}] not found in graph")
     
     def _validate_modalities(self):
-        # # for each edge, check if the from output modality <= to input modality
-        # for fr, to in self.edges():
-        #     _fr_modality = set(self.get_node_attr(fr).output_formats)
-        #     _to_modality = set(self.get_node_attr(to).input_formats)
-        #     if not _fr_modality.issubset(_to_modality):
-        #         # logger.warning(f"Modalities do not match: {fr} -> {to}")
-        #         raise ModalityMismatchError(f"Modalities do not match: {fr} -> {to}, make sure [from] output modality is subset of [to] input modality for edges")
-        #     # if not {"text"}.issubset(_to_modality): # for test purpose
-        #     #     raise ModalityMismatchError(f"{to}'s input doesn't contain 'text', make sure in any edge [from, to], the input modality of to always contains 'text'")
-        # for each node, check if the input modality set of all predecessors equals to the node's input modality set
         for node in self.nodes:
             predecessors = list(self.predecessors(node))
             if predecessors:
