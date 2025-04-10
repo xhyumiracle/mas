@@ -171,3 +171,7 @@ pytubefix==8.12.3
 langdetect==1.0.9
 langchain_openai==1.66.3
 browser_use==0.1.40
+replicate
+coloredlogs
+ipython
+moviepy==1.0.3
