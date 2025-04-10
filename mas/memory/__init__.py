@@ -1,1 +1,1 @@
-from .memory import FlowMemory
+from .flowmemory import FlowMemory

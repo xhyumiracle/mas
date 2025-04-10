@@ -1,4 +1,4 @@
-from mas.memory.memory import FlowMemory
+from mas.memory.flowmemory import FlowMemory
 from mas.storage.mem import InMemoryStorage
 
 def test_memory_inmemory():

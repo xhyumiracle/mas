@@ -1,6 +1,7 @@
 from __future__ import annotations
 import logging
 from typing import Callable, Optional, Type
+from typing_extensions import deprecated
 from agno.models.base import Model
 from mas.agent.base import Agent
 from mas.pool import Pool
@@ -10,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 ModelType = Type[Model]
 
+@deprecated("use direct import instead")
 class ModelPool(Pool[ModelType]):
     _global: Optional["ModelPool"] = None
 
@@ -22,7 +24,6 @@ class ModelPool(Pool[ModelType]):
         
         ''' set this instance to global registry context and Agent class '''
         cls._global = pool
-        Agent.set_model_pool(pool)
 
         ''' autoload builtin models '''
         

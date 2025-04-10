@@ -42,7 +42,6 @@ logger = logging.getLogger(__name__)
 mas = MasFactory(
     cls_Orch=MockOrch,
     cls_Executor=PocketflowExecutor,
-    cls_Agent=MockAgent,
     cls_Curators=[ModelCurator, ToolCurator],
 )
 mas.build()

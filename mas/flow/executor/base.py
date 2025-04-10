@@ -7,5 +7,5 @@ from mas.message import Message
 @dataclass
 class FlowExecutor(ABC):
     @abstractmethod
-    def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
+    async def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
         raise NotImplementedError

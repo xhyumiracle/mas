@@ -2,16 +2,15 @@ import logging
 from typing import List
 from mas.agent.base import Agent
 from mas.flow.executor.base import FlowExecutor
-from mas.memory.memory import FlowMemory
-from mas.message import Message
+from mas.memory.flowmemory import FlowMemory
+from mas.message import Message, Part
 from mas.graph import AgentTaskGraph
-from mas.message.message import pprint_messages
 
 logger = logging.getLogger(__name__)
 
 class SequentialExecutor(FlowExecutor):
 
-    def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
+    async def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
         self.sequential_order = list(graph.topological_sort())
 
         '''
@@ -25,10 +24,9 @@ class SequentialExecutor(FlowExecutor):
         for node_id in self.sequential_order:
             agent = graph.nodes[node_id]["agent"]
             prompt = graph.nodes[node_id]["prompt"]
-            request = prep_request(node_id, prompt, shared)
+            goal, observations = prep_request(node_id, prompt, shared)
             # pprint_messages(request)
-            response = exec(node_id, agent, request, prompt, shared)
-            response.pprint()
+            response = await exec(node_id, agent, goal, observations, prompt, shared)
         
         return response
 
@@ -40,30 +38,29 @@ def prep_request(node_id, prompt, shared_memory) -> List[Message]:
     
     """create the input messages: [predecessor user prompt, predecessor output] + current user prompt """
 
-    messages = []
+    observations = []
     for pred in graph.predecessors(node_id):
         _pred_data = mem.get_data(pred, node_id, "default")
         pred_user_prompt = _pred_data["caller_user_prompt"]
         pred_output_message = _pred_data["caller_output_message"]
-        messages.append(Message(role="user", content=pred_user_prompt))
-        messages.append(pred_output_message)
+        observations.append(Message(role="user", parts=[Part(text=pred_user_prompt)]))
+        observations.append(pred_output_message)
     
     # add the current user prompt to the last message, to help the agent understand the context
-    messages.append(Message(role="user", content=prompt))
+    
+    goal = Message(role="user", parts=[Part(text=prompt)])
 
-    return messages
+    return goal, observations
 
-def exec(node_id, agent: Agent, messages, prompt, shared_memory):
+async def exec(node_id, agent: Agent, goal: Message, observations: List[Message], prompt: str, shared_memory):
 
     """ execute the task by given agent """
-    logger.info(f"Running Agent[id={node_id}] with input:")
-    pprint_messages(messages)
+    logger.info(f"---------Running Agent[id={node_id}]")
 
-    task_result = agent.run(messages=messages)
+    task_result = await agent.run(goal=goal, observations=observations)
     
     """ result """
-    logger.info(f"Agent[id={node_id}] complete with response:")
-    pprint_messages([task_result])
+    logger.info(f"---------Agent[id={node_id}] complete")
     
     """ save to shared memory """
     successors = list(shared_memory["graph"].successors(node_id))

@@ -3,18 +3,15 @@ from typing import List, Optional, Iterator, Type
 from pydantic import BaseModel, ConfigDict
 import networkx as nx
 
-from mas.agent.agno import AgnoAgent
-from mas.agent.mock import MockAgent
+from mas.agent.factory import create_agent
 from mas.graph import AgentTaskGraph, NodeId
-from mas.memory.memory import FlowMemory
+from mas.memory.flowmemory import FlowMemory
 from mas.agent import Agent
 
 from mas.graph.types import NodeAttr
 from mas.flow.executor.base import FlowExecutor
-from mas.model.pool import ModelPool
 from mas.storage import InMemoryStorage
-from mas.tool.pool import ToolPool
-
+from mas.memory.filemap import FileMap
 logger = logging.getLogger(__name__)
 
 # TODO: memory should be in flow or executor? maybe base executor
@@ -36,22 +33,23 @@ v2:
 '''
 class AgentTaskFlow(BaseModel):
     executor: FlowExecutor
-    cls_Agent: Type[Agent]
 
     graph: Optional[AgentTaskGraph] = None
     memory: Optional[FlowMemory] = FlowMemory(storage=InMemoryStorage())
+    filemap: Optional[FileMap] = FileMap()
 
     '''add {node_id: Agent(node_attr)} to each graph node'''
     def build_agents_on_graph(self, G: AgentTaskGraph):
-        nx.set_node_attributes(G, {node_id: self.cls_Agent(id=node_id, node_attr=NodeAttr(**attr)) for node_id, attr in G.nodes(data=True)}, name='agent')
+        # nx.set_node_attributes(G, {node_id: self.cls_Agent(id=node_id, node_attr=NodeAttr(**attr)) for node_id, attr in G.nodes(data=True)}, name='agent')
+        nx.set_node_attributes(G, {node_id: create_agent(id=node_id, attr=NodeAttr(**attr), filemap=self.filemap) for node_id, attr in G.nodes(data=True)}, name='agent')
         
     def build(self, G: AgentTaskGraph):
         self.build_agents_on_graph(G)
         self.graph = G
     
     # TODO: run stream
-    def run(self):
-        return self.executor.run(self.graph, self.memory)
+    async def run(self):
+        return await self.executor.run(self.graph, self.memory)
 
     '''
     for pydantic, resolve AgentTaskGraph compatiblity issue

@@ -1,6 +1,7 @@
 from __future__ import annotations
 import logging
 from typing import Callable, Optional, Union, Any
+from typing_extensions import deprecated
 from mas.agent.base import Agent
 from mas.pool import Pool
 from mas.utils.path import relative_parent_to_root
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 ToolType = Union[Callable, Any]
 
+@deprecated("use direct import instead")
 class ToolPool(Pool[ToolType]):
     _global: Optional[ToolPool] = None
 
@@ -19,7 +21,6 @@ class ToolPool(Pool[ToolType]):
         ''' set this instance to global registry context and Agent class '''
 
         cls._global = pool
-        Agent.set_tool_pool(pool)
 
         ''' autoload builtin tools '''
         

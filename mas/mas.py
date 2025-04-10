@@ -4,9 +4,6 @@ from typing import List, Type, Union
 from mas.curator.base import Curator
 from mas.orch import Orchestrator
 from mas.flow import AgentTaskFlow
-from mas.agent import Agent
-from mas.tool import ToolPool
-from mas.model import ModelPool
 from mas.message import Message
 from mas.flow import FlowExecutor
 
@@ -15,19 +12,13 @@ logger = logging.getLogger(__name__)
 @dataclass
 class MasFactory:
     cls_Orch: Type[Orchestrator]
-    cls_Agent: Type[Agent]
     cls_Executor: Type[FlowExecutor]
     cls_Curators: List[Type[Curator]]
-    model_pool: ModelPool = field(default_factory=ModelPool.get_global)
-    tool_pool: ToolPool = field(default_factory=ToolPool.get_global)
 
     def build(self):
         ''' Initialize orchestrator, i.e. the agent task graph builder '''
 
-        self.orch = self.cls_Orch(
-            model_pool=self.model_pool,
-            tool_pool=self.tool_pool,
-        )
+        self.orch = self.cls_Orch()
 
         ''' Initialize curators '''
 
@@ -36,11 +27,10 @@ class MasFactory:
         ''' Initialize flow executor '''
 
         self.flow = AgentTaskFlow(
-            cls_Agent=self.cls_Agent,
             executor=self.cls_Executor(),
         )
 
-    def run(self, query: Union[str, Message]) -> Message:
+    async def run(self, query: Union[str, Message]) -> Message:
 
         logger.info("\n----------------1.Agent Task Graph---------------\n")
 
@@ -63,7 +53,7 @@ class MasFactory:
 
         self.flow.build(agent_task_graph)
 
-        response_message: Message = self.flow.run() #TODO: not sure format
+        response_message: Message = await self.flow.run() #TODO: not sure format
         
         logger.info("\n----------------Final Answer---------------\n")
         response_message.pprint()

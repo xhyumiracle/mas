@@ -7,12 +7,15 @@ from pathlib import Path
 from openai import OpenAI
 from tenacity import RetryCallState, retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 from mas.errors.orch_error import OrchestrationError
+from mas.model.models.openai import Openai
 from mas.orch.parser import YamlParser, JsonParser
 from mas.graph.agent_task_graph import AgentTaskGraph
 from mas.orch import Orchestrator
-from mas.message import Message
-
+from mas.message import Message, Part
+from mas.model import MODELS
 from dotenv import load_dotenv
+
+from mas.tool.tools import TOOLS
 load_dotenv()
 
 logger = logging.getLogger(__name__)
@@ -44,8 +47,8 @@ class LLMOrch(Orchestrator):
     updated_prompt: str = field(init=False)
 
     def __post_init__(self):
-        models = self.model_pool.all_names_and_descriptions()
-        tools = self.tool_pool.all_names_and_descriptions()
+        models = {name: meta["description"] for name, meta in MODELS.items()}
+        tools = {name: meta["description"] for name, meta in TOOLS.items()}
         modalities = '{text, image, video, audio}'
         # Default system message if none provided
         sys_msg = '''You are an AI designed to create a multi-agent workflow to address the user's task by breaking it down into discrete, logical steps, each handled by a specialized AI agent. 
@@ -108,7 +111,7 @@ class LLMOrch(Orchestrator):
 
         # print(updated_prompt)
         
-        logger.info(f"LLMOrch: messages: {messages}")
+        # logger.info(f"LLMOrch: messages: {messages}")
         resp_message = None
         try:
             completion = self.client.beta.chat.completions.parse(
@@ -137,7 +140,7 @@ class LLMOrch(Orchestrator):
         def before_retry(retry_state: RetryCallState):
             # append output to retry
             err = retry_state.outcome.exception()
-            logger.warning(f"Retry LLMOrch.generate due to an Exception: {err}")
+            logger.warning(f" > Retry LLMOrch.generate due to an Exception: {err}")
             if err:
                 retry_context_messages.append({"role": "user", "content": str(err)})
             else:
@@ -145,7 +148,7 @@ class LLMOrch(Orchestrator):
         ''' Retry logic end'''
 
         @retry(
-            stop=stop_after_attempt(3), # retry times
+            stop=stop_after_attempt(10), # retry times
             wait=wait_fixed(1),         # wait time between retries
             retry=retry_if_exception_type(OrchestrationError),
             before_sleep=before_retry
@@ -163,11 +166,14 @@ class LLMOrch(Orchestrator):
             graph = parser.parse_from_string(json_string)
             return graph
         
+        print ("-----------user_message", user_message)
+        
         messages=[
-            *historical_messages,
+            *Openai.format_messages(historical_messages),
             {"role": "system", "content": self.updated_prompt},
-            user_message.to_dict(),
+            *Openai.format_message(user_message),
         ]
+
 
         graph = run_once(messages)
 

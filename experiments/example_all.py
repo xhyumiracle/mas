@@ -47,13 +47,11 @@ async def run():
     print("-----------3.Run Tasks----------")
 
     flow = AgentTaskFlow(
-        # agent_cls=AgnoAgent,
-        cls_Agent=MockAgent,
         executor=PocketflowExecutor(),
     )
     flow.build(agent_task_graph)
 
-    response_message: Message = flow.run() #TODO: not sure format
+    response_message: Message = await flow.run() #TODO: not sure format
     response_message.pprint()
 
 if __name__ == "__main__":

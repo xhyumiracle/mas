@@ -1,72 +1,104 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Dict, Sequence, Optional, Union
-from agno.models.base import Model
-from agno.tools import Toolkit
+from typing import List, Dict, Literal, Sequence, Optional, Union
 
-from mas.message import Message
-from mas.graph.types import NodeId
-
-# don't import to avoid circular import
-# from mas.model import ModelPool
-# from mas.tool import ToolPool
+from mas.message import Message, Part
 
 @dataclass
 class Agent(ABC):
-    id: NodeId
-    _model_pool = None  # Class variable, shared across subclasses
-    _tool_pool = None  # Class variable, shared across subclasses
+    id: str
+    name: str
+    input_modality: List[Literal["text", "audio", "image", "video", "file"]]
+    output_modality: List[Literal["text", "audio", "image", "video", "file"]]
 
-    @classmethod
-    def set_model_pool(cls, model_pool):
-        cls._model_pool = model_pool
+    async def run(
+        self,
+        goal: Union[Message, str, Dict],
+        observations: Optional[Sequence[Message]] = None,
+        *,
+        max_iterations: int = 10,
+    ) -> Message:
+        """Run the agent with a goal and optional observations.
+        
+        Args:
+            goal: The goal to achieve (can be Message, str, or Dict)
+            observations: Optional observations/history messages
+            max_iterations: Maximum number of iterations to run
+            
+        Returns:
+            The final response message
+        """
+        if isinstance(goal, str):
+            goal = Message(role="user", parts=[Part(text=goal)])
+        elif isinstance(goal, dict):
+            goal = Message(**goal)
+        return await self._run(goal, observations, max_iterations=max_iterations)
 
-    @classmethod
-    def set_tool_pool(cls, tool_pool):
-        cls._tool_pool = tool_pool
+    @abstractmethod
+    async def _run(
+        self,
+        goal: Message,
+        observations: Optional[Sequence[Message]],
+        *,
+        max_iterations: int,
+    ) -> Message:
+        """Internal run method that handles Message type goal.
+        
+        Args:
+            goal: The goal to achieve (guaranteed to be Message)
+            observations: Optional observations/history messages
+            max_iterations: Maximum number of iterations to run
+            
+        Returns:
+            The final response message
+        """
+        raise NotImplementedError
 
-    @classmethod
-    def get_model_pool(cls):
-        if cls._model_pool is None:
-            raise ValueError("ModelPool not set. Call set_model_pool first.")
-        return cls._model_pool
+class IterativeAgent(Agent):
+    """Base class for agents that work iteratively towards a goal."""
     
-    @classmethod
-    def get_tool_pool(cls):
-        if cls._tool_pool is None:
-            raise ValueError("ToolPool not set. Call set_tool_pool first.")
-        return cls._tool_pool
-    
-    @classmethod
-    def to_model(cls, model_str) -> Model:
-        return cls.get_model_pool().get(model_str)()
-    
-    @classmethod
-    def to_tools(cls, tool_str_list: List[str]) -> Optional[List[Toolkit]]:
-        if tool_str_list is None:
-            return None
-        return [cls.get_tool_pool().get(tool_str) for tool_str in tool_str_list]
+    async def _run(
+        self,
+        goal: Message,
+        observations: Optional[Sequence[Message]],
+        *,
+        max_iterations: int = 10,
+    ) -> Message:
+        observations = list(observations) if observations else []
+        
+        for _ in range(max_iterations):
+            # 1. Act based on current state
+            result = await self.act(goal, observations)
+            observations.append(result)
+            
+            # 2. Evaluate if goal is achieved
+            if await self.evaluate(goal, observations):
+                break
+                
+        return observations[-1]  # Return the last result
     
     @abstractmethod
-    def run_messages(self, messages: Sequence[Union[Dict, Message]]) -> Message:
-        raise NotImplementedError
-    
-    def run(
-        self,
-        message: Optional[Union[str, List, Dict, Message]] = None,
-        *,
-        messages: Optional[Sequence[Union[Dict, Message]]] = [],
-        # stream: Literal[False] = False,
-        # audios: Optional[Sequence[Audio]] = None,
-        # images: Optional[Sequence[Image]] = None,
-        # videos: Optional[Sequence[Video]] = None,
-        # files: Optional[Sequence[File]] = None,
-    ) -> Message:
-        if messages is None:
-            messages = []
-
-        # append message
-        if message is not None:
-            messages.append(message)
-
-        return self.run_messages(messages=messages)
+    async def act(self, goal: Message, observations: List[Message]) -> Message:
+        """Take an action based on goal and current observations.
+        
+        Args:
+            goal: The goal to achieve
+            observations: Current observations/history
+             
+        Returns:
+            The result of the action
+        """
+        pass
+        
+    @abstractmethod
+    async def evaluate(self, goal: Message, observations: List[Message]) -> bool:
+        """Evaluate if the goal has been achieved.
+        
+        Args:
+            goal: The goal to achieve
+            observations: Current observations/history
+            
+        Returns:
+            True if goal is achieved, False otherwise
+        """
+        pass

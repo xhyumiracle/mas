@@ -2,8 +2,8 @@ import logging
 from typing import List
 from mas.agent import Agent
 from mas.graph.types import NodeId
-from mas.message import Message, pprint_messages
-from mas.memory.memory import FlowMemory
+from mas.message import Message
+from mas.memory.flowmemory import FlowMemory
 from mas.graph.agent_task_graph import AgentTaskGraph
 from mas.flow import FlowExecutor
 from pocketflow import Node, BatchNode, Flow
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class PocketflowExecutor(FlowExecutor):
     sequential_order: List[NodeId] = []
 
-    def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
+    async def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
 
         self.sequential_order = list(graph.topological_sort())
 
@@ -100,12 +100,12 @@ class FlowNode(Node):
     def exec(self, messages):
 
         logger.info(f"Running Agent[id={self.agent.id}] with input:")
-        pprint_messages(messages)
+        logger.info(messages.format())
 
         response_message = self.agent.run(messages=messages)
         
         logger.info(f"Agent[id={self.agent.id}] complete with response:")
-        pprint_messages([response_message])
+        logger.info(response_message.format())
         
         return response_message
 

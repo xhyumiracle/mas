@@ -50,7 +50,6 @@ async def run():
         # Build execution flow
         print("-----------3.Execution Flow----------")
         flow = AgentTaskFlow(
-            cls_Agent=AgnoAgent,
             executor=PocketflowExecutor(),
         )
         flow.build(agent_task_graph)
@@ -58,7 +57,7 @@ async def run():
         
         # Execute flow
         print("-----------4.Run Tasks----------")
-        response_message = flow.run()
+        response_message = await flow.run()
         response_message.pprint()
         
         # Save result

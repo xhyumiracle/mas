@@ -1,1 +1,1 @@
-from .pool import ModelPool
+from .models import MODELS

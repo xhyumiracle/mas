@@ -1,7 +1,7 @@
 import json
 import os
 
-def read_gaia_json(filepath="/mnt/d/Agent/mas/data/gaia/level_1.json"):
+def read_gaia_json(filepath="/Users/xiaohang.yu/Documents/GitHub/xhyumiracle/mas/data/gaia/level_1.json"):
     """
     Read and parse a JSON file from the specified path.
     

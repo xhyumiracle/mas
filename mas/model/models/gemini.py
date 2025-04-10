@@ -67,7 +67,7 @@ def upload_audio_filepath(path: str, client) -> GeminiFile:
 
             
 
-@ModelPool.register(name="gemini", description="Gemini")
+# @ModelPool.register(name="gemini", description="Gemini")
 class GeminiModel(Gemini):
     def __init__(self, id="gemini-1.5-flash"):
         super().__init__(id=id)
@@ -145,22 +145,20 @@ class GeminiModel(Gemini):
             message_parts: List[Any] = []
 
             # Function calls
-            if (not content or role == "model") and message.tool_calls:
-                for tool_call in message.tool_calls:
-                    message_parts.append(
-                        Part.from_function_call(
-                            name=tool_call["function"]["name"],
-                            args=json.loads(tool_call["function"]["arguments"]),
-                        )
-                    )
-            # Function results
-            elif role == "tool" and message.tool_calls:
-                for tool_call in message.tool_calls:
-                    message_parts.append(
-                        Part.from_function_response(
-                            name=tool_call["tool_name"], response={"result": tool_call["content"]}
-                        )
-                    )
+            if (not content or role == "model") and message.tool_call:
+                tool_call = message.tool_call
+                content = {
+                    "role": "function",
+                    "name": tool_call.name,
+                    "content": json.dumps(tool_call.arguments)
+                }
+            elif role == "tool" and message.tool_result:
+                tool_result = message.tool_result
+                content = {
+                    "role": "function",
+                    "name": tool_result.name,
+                    "content": tool_result.content
+                }
             elif isinstance(content, str):
                 message_parts = [content]
             '''
