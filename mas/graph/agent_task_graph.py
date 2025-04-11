@@ -99,3 +99,37 @@ class AgentTaskGraph(nx.DiGraph):
         import matplotlib.pyplot as plt
         nx.draw(self, with_labels=True)
         plt.show()
+
+    def generate_mermaid_code(self, direction="TD"):
+        """
+        Generate a Mermaid diagram representation of the agent task graph.
+        
+        Returns:
+            str: Mermaid diagram code
+        """
+        mermaid_code = f"graph {direction}\n"
+        
+        # Add nodes with their properties
+        for node_id in self.nodes():
+            node_attr = self.get_node_attr(node_id)
+            node_name = getattr(node_attr, 'name', f'Node{node_id}')
+            node_prompt = getattr(node_attr, 'prompt', '')
+            
+            # Format the prompt text for display - replace newlines with \n
+            display_prompt = node_prompt.replace('\n', '\\n')
+            
+            # Create node definition
+            mermaid_code += f'    {node_id}["{node_id}: {node_name}\\n{display_prompt}"]\n'
+        
+        # Add edges
+        for u, v, data in self.edges(data=True):
+            # Check if there's an action attribute in the edge data
+            action = data.get('action', None)
+            if action:
+                # If there's an action, include it in the edge label
+                mermaid_code += f'    {u} -->|"{action}"| {v}\n'
+            else:
+                # Otherwise, just create a simple edge
+                mermaid_code += f'    {u} --> {v}\n'
+        
+        return mermaid_code

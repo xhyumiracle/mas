@@ -27,8 +27,10 @@ class SequentialExecutor(FlowExecutor):
             goal, observations = prep_request(node_id, prompt, shared)
             # pprint_messages(request)
             response = await exec(node_id, agent, goal, observations, prompt, shared)
+            # response.pprint()
+            yield response
         
-        return response
+        # return response
 
     # retry_prompt = "Please adjust your output based on the feedback from the reviewer."
 
