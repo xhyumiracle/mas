@@ -324,8 +324,8 @@ class Openai(Model):
     '''
 
 class GPT4o(Openai):
-    def __init__(self, id="gpt-4o"):
-        super().__init__(id=id)
+    def __init__(self):
+        super().__init__(id="gpt-4o")
 
 
 # def file_to_message(files: Sequence[File]) -> List[Dict[str, Any]]:

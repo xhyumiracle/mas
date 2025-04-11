@@ -6,11 +6,9 @@ load_dotenv()
 import logging
 logging.basicConfig(level=logging.INFO)
 
-from mas.orch import LLMOrch
-from mas.curator import ModelCurator, ToolCurator
-from mas.flow import AgentTaskFlow, PocketflowExecutor
-from mas.agent import Agent, MockAgent, AgnoAgent
-from mas.message import Message
+from mas.orch.planner import Planner
+from mas.curator.mock import MockCurator
+from mas.executor import SequentialExecutor
 import json
 logger = logging.getLogger(__name__)
 
@@ -22,10 +20,10 @@ async def run():
         return
     
     # Initialize orchestrator with current question
-    orch = LLMOrch()
+    orch = Planner()
 
     # Initialize curators once
-    curators = [ToolCurator(), ModelCurator()]
+    curator = MockCurator()
     
     # Process each question
     results = []
@@ -36,28 +34,19 @@ async def run():
         print(f"Question: {query}")
         
         # Generate agent task graph
-        agent_task_graph = orch.generate(query=query)
-        print("-----------1.Agent Task Graph----------")
-        agent_task_graph.pprint()
+        task_graph = orch.generate(query=query)
+        print("-----------1.Task Graph----------")
+        task_graph.pprint()
         
         # Apply curations
-        print("-----------2.Curations----------")
-        for curator in curators:
-            agent_task_graph = curator.curate(agent_task_graph)
+        print("-----------2.Agent Graph----------")
+        agent_graph = curator.curate(task_graph)
         print("Curation done")
-        agent_task_graph.pprint()
-        
-        # Build execution flow
-        print("-----------3.Execution Flow----------")
-        flow = AgentTaskFlow(
-            executor=PocketflowExecutor(),
-        )
-        flow.build(agent_task_graph)
-        flow.pprint_flow_order()
+        agent_graph.pprint()
         
         # Execute flow
-        print("-----------4.Run Tasks----------")
-        response_message = await flow.run_to_completion()
+        print("-----------3.Run Tasks----------")
+        response_message = await SequentialExecutor(agent_graph).run_to_completion()
         response_message.pprint()
         
         # Save result

@@ -1,15 +1,15 @@
 import asyncio
 
 from dotenv import load_dotenv
-from mas.flow.executor.sequential import SequentialExecutor
+from mas.executor.sequential import SequentialExecutor
 load_dotenv()
 
 import logging
 logging.basicConfig(level=logging.INFO)
 
 from mas.orch import Orchestrator, MockOrch
-from mas.curator import ModelCurator, ToolCurator
-from mas.flow import AgentTaskFlow
+from mas.curator import MockCurator, ToolCurator
+from mas.executor import AgentTaskFlow
 from mas.agent import Agent, MockAgent, AgnoAgent
 from mas.message import Message
 
@@ -43,7 +43,7 @@ def generate_mermaid_from_agent_graph(agent_graph):
     for line in str(agent_graph).split('\n'):
         if line.startswith('[(') and ')]' in line:
             edges_text = line.strip()
-            # Parse edges from the format [(1, 2, {'action': None})]
+            # Parse edges from the format [(1, 2, {'label': None})]
             edges_info = eval(edges_text)
             break
     
@@ -76,7 +76,7 @@ async def run():
 
     ''' Initialize curators '''
 
-    curators = [ToolCurator(), ModelCurator()]
+    curators = [ToolCurator(), MockCurator()]
     agent_task_graph = task_graph
     for curator in curators:
         agent_task_graph = curator.curate(agent_task_graph)

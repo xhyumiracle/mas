@@ -12,7 +12,7 @@ class Entry(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     caller = Column(String)
     callee = Column(String)
-    action = Column(String)
+    label = Column(String)
     data = Column(Text)  # Store as JSON
     timestamp = Column(String)
 
@@ -27,7 +27,7 @@ class SqliteStorage(Storage):
         entry_row = Entry(
             caller=entry["caller"],
             callee=entry["callee"],
-            action=entry["action"],
+            label=entry["label"],
             data=json.dumps(entry["data"]),
             timestamp=entry["timestamp"]
         )
@@ -47,9 +47,9 @@ class SqliteStorage(Storage):
         session.close()
         return [self._row_to_dict(e) for e in entries]
 
-    def get_entry(self, caller: NodeId, callee: NodeId, action: str) -> Optional[Dict[str, Any]]:
+    def get_entry(self, caller: NodeId, callee: NodeId, label: str) -> Optional[Dict[str, Any]]:
         session = self.Session()
-        entry = session.query(Entry).filter_by(caller=caller, callee=callee, action=action).first()
+        entry = session.query(Entry).filter_by(caller=caller, callee=callee, label=label).first()
         session.close()
         return self._row_to_dict(entry) if entry else None
 
@@ -57,7 +57,7 @@ class SqliteStorage(Storage):
         return {
             "caller": entry.caller,
             "callee": entry.callee,
-            "action": entry.action,
+            "label": entry.label,
             "data": json.loads(entry.data),
             "timestamp": entry.timestamp
         }

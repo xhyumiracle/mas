@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-from mas.graph.agent_task_graph import AgentTaskGraph
+from abc import ABC, abstractmethod
+from mas.graph.task_graph import TaskGraph
 
 @dataclass
-class Curator:
-    def curate(self, G: AgentTaskGraph) -> AgentTaskGraph:
+class Curator(ABC):
+    @abstractmethod
+    def curate(self, G: TaskGraph) -> TaskGraph:
         raise NotImplementedError

@@ -7,10 +7,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 from mas.mas import MasFactory
-from mas.orch import LLMOrch
-from mas.curator import ModelCurator, ToolCurator
-from mas.flow import PocketflowExecutor
-from mas.agent import MockAgent, AgnoAgent
+from mas.orch.planner import Planner
+from mas.executor import SequentialExecutor
+from mas.curator.mock import MockCurator
 import json
 
 logger = logging.getLogger(__name__)
@@ -22,9 +21,9 @@ async def run():
         logger.error("Failed to load GAIA data")
         return
     mas = MasFactory(
-        cls_Orch=LLMOrch,
-        cls_Executor=PocketflowExecutor,
-        cls_Curators=[ModelCurator, ToolCurator],
+        cls_Orch=Planner,
+        cls_Executor=SequentialExecutor,
+        cls_Curator=MockCurator,
     )
     mas.build()
     # Process each question

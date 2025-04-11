@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Sequence, Optional, Union
 from mas.message import Message, Part
-from mas.graph.agent_task_graph import AgentTaskGraph
+from mas.graph.task_graph import TaskGraph
 from abc import ABC, abstractmethod
 
 @dataclass(kw_only=True)
@@ -11,7 +11,7 @@ class Orchestrator(ABC):
         self, 
         query: Union[str, Message],
         historical_messages: Optional[Sequence[Message]]=[]
-    ) -> AgentTaskGraph:
+    ) -> TaskGraph:
         # assemble query to message
         user_message = query if type(query) == Message else Message(role="user", parts=[Part(text=query)]) 
         return self.generate_by_message(user_message, historical_messages)
@@ -21,5 +21,5 @@ class Orchestrator(ABC):
         self,
         user_message: Message,
         historical_messages: Optional[Sequence[Message]]=[]
-    ) -> AgentTaskGraph:
+    ) -> TaskGraph:
         raise NotImplementedError

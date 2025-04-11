@@ -9,7 +9,7 @@ from tenacity import RetryCallState, retry, stop_after_attempt, wait_fixed, retr
 from mas.errors.orch_error import OrchestrationError
 from mas.model.models.openai import Openai
 from mas.orch.parser import YamlParser, JsonParser
-from mas.graph.agent_task_graph import AgentTaskGraph
+from mas.graph.task_graph import TaskGraph
 from mas.orch import Orchestrator
 from mas.message import Message, Part
 from mas.model import MODELS
@@ -24,7 +24,7 @@ class Agent(BaseModel):
     id: int
     name: str
     profile: str
-    prompt: str
+    task: str
     model: str
     tools: List[str]
     input: List[str]
@@ -60,7 +60,7 @@ class LLMOrch(Orchestrator):
         - id: agent's index (in the correct order starting with 1)
         - name: short name reflecting the agent’s role
         - profile: system prompt specifying the agent’s role and precise behavior
-        - prompt: clear, detailed task instruction(s) for the agent to complete its task 
+        - task: clear, detailed task instruction(s) for the agent to complete its task 
         - model: select a base model that best suits the task from the list below: \n{model_list}
         - tools: list ALL the tools that are necessary or useful for task completion from the list below: \n{tool_list}
         - input: Specify all input modalities involved from {modalities}.
@@ -74,16 +74,6 @@ class LLMOrch(Orchestrator):
             .replace('{tool_list}', yaml.dump(tools))
             .replace('{modalities}', modalities)
         )
-    
-    @staticmethod
-    def get_paths():
-        """Returns the paths needed for process_prompt as a tuple."""
-        from pathlib import Path
-        current_dir = Path(__file__).parent
-        prompt_path = current_dir / "prompt.yaml"
-        models_path = current_dir / "models"
-        tools_path = current_dir / "tools"
-        return prompt_path, models_path, tools_path
 
     def get_structured_output(self, messages:List[Message] , Print:bool=True) -> Workflow:
         """
@@ -129,7 +119,7 @@ class LLMOrch(Orchestrator):
         return resp_message
     
     
-    def generate_by_message(self, user_message, historical_messages) -> AgentTaskGraph:
+    def generate_by_message(self, user_message, historical_messages) -> TaskGraph:
         """Generate an AgentTaskGraph from a sequence of messages."""
         
         ''' Retry logic '''
@@ -153,7 +143,7 @@ class LLMOrch(Orchestrator):
             retry=retry_if_exception_type(OrchestrationError),
             before_sleep=before_retry
         )
-        def run_once(original_messages: List[Message]) -> AgentTaskGraph:
+        def run_once(original_messages: List[Message]) -> TaskGraph:
             full_messages = original_messages + retry_context_messages
             llm_output_message = self.get_structured_output(full_messages) # it's a dict
 

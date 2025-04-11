@@ -8,11 +8,11 @@ class FlowMemory:
     def __init__(self, storage: Storage):
         self.storage = storage
 
-    def add_entry(self, caller: NodeId, callee: NodeId, action: str, data: Dict[str, Any]) -> None:
+    def add_entry(self, caller: NodeId, callee: NodeId, label: str, data: Dict[str, Any]) -> None:
         entry = {
             "caller": caller,
             "callee": callee,
-            "action": action,
+            "label": label,
             "data": data,
             "timestamp": datetime.utcnow().isoformat()
         }
@@ -26,8 +26,8 @@ class FlowMemory:
         entries = self.storage.get_entries_by_callee(callee)
         return self.entries_mask(entries, mask)
 
-    def get_data(self, caller: NodeId, callee: NodeId, action: str) -> Optional[Dict[str, Any]]:
-        entry = self.storage.get_entry(caller, callee, action)
+    def get_data(self, caller: NodeId, callee: NodeId, label: str) -> Optional[Dict[str, Any]]:
+        entry = self.storage.get_entry(caller, callee, label)
         return entry["data"] if entry else None
 
     def entries_mask(self, entries: List[Dict[str, Any]], keys: Optional[List[str]] = None) -> List[Dict[str, Any]]:

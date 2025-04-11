@@ -6,10 +6,9 @@ from mas.message import Message, Part
 
 @dataclass
 class Agent(ABC):
-    id: str
-    name: str
-    input_modality: List[Literal["text", "audio", "image", "video", "file"]]
-    output_modality: List[Literal["text", "audio", "image", "video", "file"]]
+    id: int
+    input_modalities: List[Literal["text", "audio", "image", "video", "file"]]
+    output_modalities: List[Literal["text", "audio", "image", "video", "file"]]
 
     async def run(
         self,

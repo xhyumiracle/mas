@@ -14,10 +14,10 @@ class InMemoryStorage(Storage):
         self.entries.append(entry)
         caller = entry["caller"]
         callee = entry["callee"]
-        action = entry["action"]
+        label = entry["label"]
         self.caller_index[caller].append(entry)
         self.callee_index[callee].append(entry)
-        self.entry_index[(caller, callee, action)] = entry
+        self.entry_index[(caller, callee, label)] = entry
 
     def get_entries_by_caller(self, caller: NodeId) -> List[Dict[str, Any]]:
         return self.caller_index.get(caller, [])
@@ -25,5 +25,5 @@ class InMemoryStorage(Storage):
     def get_entries_by_callee(self, callee: NodeId) -> List[Dict[str, Any]]:
         return self.callee_index.get(callee, [])
 
-    def get_entry(self, caller: NodeId, callee: NodeId, action: str) -> Optional[Dict[str, Any]]:
-        return self.entry_index.get((caller, callee, action), None)
+    def get_entry(self, caller: NodeId, callee: NodeId, label: str) -> Optional[Dict[str, Any]]:
+        return self.entry_index.get((caller, callee, label), None)

@@ -1,5 +1,7 @@
 import asyncio
 from dotenv import load_dotenv
+
+from mas.orch.planner import Planner
 load_dotenv()
 
 import logging
@@ -7,9 +9,8 @@ logging.basicConfig(level=logging.INFO)
 
 from mas.mas import MasFactory
 from mas.orch import MockOrch, LLMOrch
-from mas.curator import ModelCurator, ToolCurator
-from mas.flow import PocketflowExecutor, SequentialExecutor
-
+from mas.executor import SequentialExecutor
+from mas.curator.mock import MockCurator
 logger = logging.getLogger(__name__)
 from mas.utils.logging import init_logging
 
@@ -17,9 +18,9 @@ from mas.utils.logging import init_logging
 init_logging()
 
 mas = MasFactory(
-    cls_Orch=LLMOrch,
+    cls_Orch=Planner,
+    cls_Curator=MockCurator,
     cls_Executor=SequentialExecutor,
-    cls_Curators=[ModelCurator, ToolCurator],
 )
 mas.build()
 # mas.run("Write a story in George R.R. Martin's style")

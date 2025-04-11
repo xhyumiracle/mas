@@ -1,19 +1,17 @@
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Type, Union
 from mas.curator.base import Curator
 from mas.orch import Orchestrator
-from mas.flow import AgentTaskFlow
 from mas.message import Message
-from mas.flow import FlowExecutor
-
+from mas.executor import GraphExecutor
 logger = logging.getLogger(__name__)
 
 @dataclass
 class MasFactory:
     cls_Orch: Type[Orchestrator]
-    cls_Executor: Type[FlowExecutor]
-    cls_Curators: List[Type[Curator]]
+    cls_Executor: Type[GraphExecutor]
+    cls_Curator: Type[Curator]
 
     def build(self):
         ''' Initialize orchestrator, i.e. the agent task graph builder '''
@@ -22,17 +20,11 @@ class MasFactory:
 
         ''' Initialize curators '''
 
-        self.curators = [_C() for _C in self.cls_Curators]
-
-        ''' Initialize flow executor '''
-
-        self.flow = AgentTaskFlow(
-            executor=self.cls_Executor(),
-        )
+        self.curator = self.cls_Curator()
 
     async def run(self, query: Union[str, Message]) -> Message:
 
-        logger.info("\n----------------1.Agent Task Graph---------------\n")
+        logger.info("\n----------------1.Task Graph---------------\n")
 
         ''' Generate the task graph '''
 
@@ -41,19 +33,17 @@ class MasFactory:
         task_graph.pprint()
         # agent_task_graph.plot()
 
-        logger.info("\n----------------2.Curations---------------\n")
+        logger.info("\n----------------2.Agent Graph---------------\n")
 
-        agent_task_graph = task_graph
-        for curator  in self.curators:
-            agent_task_graph = curator.curate(agent_task_graph)
+        agent_graph = self.curator.curate(task_graph)
 
-        agent_task_graph.pprint()
+        agent_graph.pprint()
 
-        logger.info("\n----------------3.Run Tasks---------------\n")
+        logger.info("\n----------------3.Execution---------------\n")
 
-        self.flow.build(agent_task_graph)
-
-        async for response in self.flow.run():
+        # self.flow.build(agent_graph)
+        
+        async for response in self.cls_Executor(agent_graph).run():
             response.pprint()
             latest_response = response
         

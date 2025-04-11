@@ -7,24 +7,25 @@ def test_create_agent_basic():
     """Test basic agent creation with GPT-4 and simple tools."""
     # Create a basic node attributes
     node_attr = NodeAttr(
-        name="test_agent",
-        input_formats=["text"],
-        output_formats=["text"],
-        prompt="You are a helpful assistant.",
-        profile="You are a test agent.",
-        model="gpt-4o",
-        tools=["mock_text_to_text", "google_search"],  # Using simple tools for testing
-        agent_type="llm"
+        id=1,
+        input_modalities=["text"],
+        output_modalities=["text"],
+        task="You are a helpful assistant.",
     )
 
-    filemap = FileMap()
+    args = {
+        "profile": "You are a test agent.",
+        "model": "gpt-4o",
+        "tools": ["mock_text_to_text", "google_search"],  # Using simple tools for testing
+    }
+
     
     # Create the agent
-    agent = create_agent(id=123, attr=node_attr, filemap=filemap)
+    agent = create_agent("llm", attr=node_attr, **args)
     
     # Basic assertions
     assert agent is not None
-    assert agent.name == "test_agent"
+    assert agent.id == 1
     
     # Test agent can process a simple message
     response = asyncio.run(agent.run("Hello, what's the weather in Tokyo?"))

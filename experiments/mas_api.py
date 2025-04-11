@@ -18,11 +18,11 @@ from app.database import create_db_and_tables, get_session
 from app.models import Conversation, ConversationListItem, Message, User
 
 from mas.orch import Orchestrator, MockOrch
-from mas.curator import ModelCurator, ToolCurator
-from mas.flow import AgentTaskFlow
+from mas.curator import MockCurator, ToolCurator
+from mas.executor import AgentTaskFlow
 from mas.agent import Agent, MockAgent, AgnoAgent
 from mas.message import Message
-from mas.flow.executor.sequential import SequentialExecutor
+from mas.executor.sequential import SequentialExecutor
 
 # Create FastAPI app
 @asynccontextmanager
@@ -172,7 +172,7 @@ async def event_generator(request: Request, question: str, conversation_id: uuid
     
     task_graph = orch.generate(query=question)
 
-    curators = [ToolCurator(), ModelCurator()]
+    curators = [ToolCurator(), MockCurator()]
     agent_task_graph = task_graph
     for curator in curators:
         agent_task_graph = curator.curate(agent_task_graph)

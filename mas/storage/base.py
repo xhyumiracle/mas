@@ -17,5 +17,5 @@ class Storage(ABC):
         pass
 
     @abstractmethod
-    def get_entry(self, caller: NodeId, callee: NodeId, action: str) -> Optional[Dict[str, Any]]:
+    def get_entry(self, caller: NodeId, callee: NodeId, label: str) -> Optional[Dict[str, Any]]:
         pass

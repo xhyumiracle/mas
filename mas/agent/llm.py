@@ -9,6 +9,7 @@ from mas.memory.filemap import FILEMAP_PROTOCOL_PREFIX, FileMap
 from mas.message import Message, Part
 from mas.message.types import File, ToolCall, ToolResult
 from mas.model.base import Model
+from mas.model.models.openai import GPT4o
 from mas.utils.file import convert_files_in_structure
 
 logger = logging.getLogger(__name__)
@@ -17,28 +18,24 @@ logger = logging.getLogger(__name__)
 class LLMAgent(IterativeAgent):
     def __init__(
         self, 
-        id: str,
-        name: str, 
-        model: Model,
-        profile: Optional[str] = "You are a helpful assistant.",
-        tools: Optional[List[callable]] = None, 
-        input_modality=["text"],
-        output_modality=["text"],
+        id: int,
+        input_modalities=["text"],
+        output_modalities=["text"],
         *,
-        filemap: FileMap
+        model: Model = GPT4o(),
+        profile: Optional[str] = "You are a helpful assistant.",
+        tools: Optional[List[callable]] = None,
     ):
         super().__init__(
             id=id,
-            name=name,
-            input_modality=input_modality,
-            output_modality=output_modality
+            input_modalities=input_modalities,
+            output_modalities=output_modalities
         )
-        self.model = model
+        self.filemap = None # need to set later
         # self.profile = profile
         # self.tools = tools
-        self.filemap = filemap
+        self.model = model
         self.tool_map = self._create_tool_dict(tools)
-
         self.system_msg = Message(role="system", parts=[
             Part(text=profile),
             Part(text=f"""<instruction>
@@ -63,7 +60,9 @@ Example incorrect usage (DO NOT USE):
         except NotImplementedError:
             self.tool_definitions = None
             logger.warning(f"Model {model.__class__.__name__} doesn't support tool calling")
-        
+    
+    def set_filemap(self, filemap: FileMap):
+        self.filemap = filemap
     
     async def run_messages(self, messages: Sequence[Message]) -> Message:
         """Core LLM interaction logic that processes a sequence of messages.

@@ -160,8 +160,8 @@ class Part(BaseModel):
             return f"[ToolResult] {self.tool_result.format()}"
         if self.file_data:
             return self.file_data.format()
-        if self.inline_data:
-            return f"[InlineData] {self.inline_data.get('mime_type', '?')} ({len(self.inline_data.get('data', ''))}B)"
+        # if self.inline_data: # don't know what this is, can remove
+        #     return f"[InlineData] {self.inline_data.get('mime_type', '?')} ({len(self.inline_data.get('data', ''))}B)"
         return "[EmptyPart]"
 
 class Message(BaseModel):

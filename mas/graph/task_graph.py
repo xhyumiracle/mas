@@ -12,14 +12,14 @@ logger = logging.getLogger(__name__)
 Graph:
 v0: 
 1. DAG, (Multi)DiGraph
-1. each node out_action: only 1 out_arc
-2. each node in_action: N>=0 in_arcs
+1. each node out_label: only 1 out_arc
+2. each node in_label: N>=0 in_arcs
 
 v1: 
 1. DCG
-2. each node each out_action: M>=0 out_arcs
+2. each node each out_label: M>=0 out_arcs
 '''
-class AgentTaskGraph(nx.DiGraph):
+class TaskGraph(nx.DiGraph):
     
     def __init__(self, graph: nx.DiGraph=nx.MultiDiGraph(), nodes: List[Tuple[NodeId, NodeAttr]]=[], edges: List[Tuple[NodeId, NodeId, str]]=[]):
         super().__init__(graph)
@@ -42,11 +42,11 @@ class AgentTaskGraph(nx.DiGraph):
                 predecessor_output_modalities = set(
                     format
                     for predecessor in predecessors
-                    for format in self.get_node_attr(predecessor).output_formats
+                    for format in self.get_node_attr(predecessor).output_modalities
                 )
-                print("--------- predecessor_output_modalities", predecessor_output_modalities)
-                print("----------my input modalities", set(self.get_node_attr(node).input_formats))
-                if predecessor_output_modalities != set(self.get_node_attr(node).input_formats):
+                # print("--------- predecessor_output_modalities", predecessor_output_modalities)
+                # print("----------my input modalities", set(self.get_node_attr(node).input_modalities))
+                if predecessor_output_modalities != set(self.get_node_attr(node).input_modalities):
                     raise ModalityMismatchError(f"Input modalities of node {node} do not match the output modalities of its predecessors")
     
     def validate(self):
@@ -113,9 +113,9 @@ class AgentTaskGraph(nx.DiGraph):
         for node_id in self.nodes():
             node_attr = self.get_node_attr(node_id)
             node_name = getattr(node_attr, 'name', f'Node{node_id}')
-            node_prompt = getattr(node_attr, 'prompt', '')
+            node_prompt = getattr(node_attr, 'task', '')
             
-            # Format the prompt text for display - replace newlines with \n
+            # Format the task text for display - replace newlines with \n
             display_prompt = node_prompt.replace('\n', '\\n')
             
             # Create node definition
@@ -123,11 +123,11 @@ class AgentTaskGraph(nx.DiGraph):
         
         # Add edges
         for u, v, data in self.edges(data=True):
-            # Check if there's an action attribute in the edge data
-            action = data.get('action', None)
-            if action:
-                # If there's an action, include it in the edge label
-                mermaid_code += f'    {u} -->|"{action}"| {v}\n'
+            # Check if there's an label attribute in the edge data
+            label = data.get('label', None)
+            if label:
+                # If there's an label, include it in the edge label
+                mermaid_code += f'    {u} -->|"{label}"| {v}\n'
             else:
                 # Otherwise, just create a simple edge
                 mermaid_code += f'    {u} --> {v}\n'

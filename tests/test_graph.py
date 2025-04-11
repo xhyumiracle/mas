@@ -1,18 +1,18 @@
 from dataclasses import asdict
-from mas.graph import AgentTaskGraph, NodeAttr, EdgeAttr
+from mas.graph import TaskGraph, NodeAttr, EdgeAttr
 import networkx as nx
 
 def test_add_node_edge():
     G=nx.MultiDiGraph()
-    graph = AgentTaskGraph(G)
-    node_a = NodeAttr(name="A", prompt="task A", profile="profile A", model="model A", input_formats=["input A"], output_formats=["output A"], tools=["tool A"])
-    node_b = NodeAttr(name="B", prompt="task B", profile="profile B", model="model B", input_formats=["input B"], output_formats=["output B"], tools=["tool B"])
+    graph = TaskGraph(G)
+    node_a = NodeAttr(name="A", task="task A", profile="profile A", model="model A", input_modalities=["input A"], output_modalities=["output A"], tools=["tool A"])
+    node_b = NodeAttr(name="B", task="task B", profile="profile B", model="model B", input_modalities=["input B"], output_modalities=["output B"], tools=["tool B"])
     graph.add_node_typed(1, node_a)
     graph.add_node_typed(2, node_b)
     graph.add_nodes_from_typed([(3, node_a), (4, node_b)])
     graph.add_edge(1, 2)
     graph.add_edge(2, 3)
-    edge_attr = EdgeAttr(action="test")
+    edge_attr = EdgeAttr(label="test")
     graph.add_edges_from_typed([(1, 3, edge_attr), (3, 4, edge_attr)])
     print(graph.edges())
     print(graph.in_edges(2))
