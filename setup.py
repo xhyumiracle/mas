@@ -1,7 +1,8 @@
 from setuptools import setup, find_packages
 
+# Read requirements and filter out lines starting with "-e"
 with open("requirements.txt", "r") as f:
-    requirements = f.read().splitlines()
+    requirements = [req for req in f.read().splitlines() if not req.startswith("-e")]
 
 setup(
     name="mas",
