@@ -4,7 +4,7 @@ from .openai import GPT4o
 MODELS = {
     "gpt-4o": {
         "class": GPT4o,
-        "description": "GPT-4o is the latest and most powerful model from OpenAI, offering advanced language understanding and generation capabilities."
+        "description": "OpenAI GPT-4o"
     }
 }
 

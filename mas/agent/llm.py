@@ -41,24 +41,22 @@ class LLMAgent(IterativeAgent):
 
         self.system_msg = Message(role="system", parts=[
             Part(text=profile),
-            # Part(text=f"<instruction> If you need to mention any file (i.e. {FILEMAP_PROTOCOL_PREFIX}) in any part of themessage, always use the format {FileMap.to_placeholder(uri=FILEMAP_PROTOCOL_PREFIX)} with the correct uri as a placeholder to represent the file in your final response.")
-            Part(text="""<instruction>
-When referencing any file (including filemap:// URIs) in your response, you MUST follow these rules:
+            Part(text=f"""<instruction>
+When referencing any file (including {FILEMAP_PROTOCOL_PREFIX} URIs) in your response, you MUST follow these rules:
 
-1. ALWAYS use the exact format: <file>filemap://your_file_uri</file>
+1. ALWAYS use the exact format: <file>{FILEMAP_PROTOCOL_PREFIX}your_file_uri</file>
 2. NEVER use any other format like markdown image syntax ![text](uri) or direct URIs
 3. The file reference MUST be wrapped in <file> tags
 4. The uri parameter MUST be explicitly specified
 5. This applies to ALL file references, regardless of file type or context
 
 Example correct usage:
-<file>filemap://_.jpg</file>
+<file>{FILEMAP_PROTOCOL_PREFIX}_.jpg</file>
 
 Example incorrect usage (DO NOT USE):
-![Scene 3](filemap://_.jpg)
-filemap://_.jpg
-</instruction>""")
-        ])
+![Scene 3]({FILEMAP_PROTOCOL_PREFIX}_.jpg)
+{FILEMAP_PROTOCOL_PREFIX}_.jpg
+</instruction>""")])
 
         try:
             self.tool_definitions = self.model.create_tool_definitions(self._create_wrap_tools(tools))
@@ -97,7 +95,7 @@ filemap://_.jpg
             current_messages.append(response)
             current_messages.append(tool_response)
 
-    async def act(self, goal: Message, observations: List[Message]) -> Message:
+    async def act(self, goal: Message, observations: Sequence[Message]) -> Message:
         """Take an action by running the LLM on current observations and goal.
         
         Args:
@@ -131,7 +129,7 @@ filemap://_.jpg
 
         return result
         
-    async def evaluate(self, goal: Message, observations: List[Message]) -> bool:
+    async def evaluate(self, goal: Message, observations: Sequence[Message]) -> bool:
         """Evaluate if the goal has been achieved.
         
         Args:

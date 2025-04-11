@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import List
+from typing import Optional, Sequence
 from mas.graph import NodeAttr
-from mas.agent import Agent, Message
-
+from mas.agent import Agent
+from mas.message import Message, Part
 class MockAgent(Agent):
     def __init__(self, id, node_attr: NodeAttr):
         super().__init__(id)
@@ -16,5 +16,9 @@ class MockAgent(Agent):
         self.output_formats = node_attr.output_formats
         self.tools = node_attr.tools
 
-    def run_messages(self, messages: List[Message]) -> Message:
-        return Message(role="assistant", content=f"Hello, I am Agent[id={self.id}]), I received your request: {messages}")
+    async def _run(
+        self,
+        goal: Message,
+        observations: Optional[Sequence[Message]],
+    ) -> Message:
+        return Message(role="assistant", parts=[Part(text=f"Hello, I am Agent[id={self.id}]), my goal is: {goal}")])

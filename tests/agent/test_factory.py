@@ -13,7 +13,7 @@ def test_create_agent_basic():
         prompt="You are a helpful assistant.",
         profile="You are a test agent.",
         model="gpt-4o",
-        tools=["mock", "google_search"],  # Using simple tools for testing
+        tools=["mock_text_to_text", "google_search"],  # Using simple tools for testing
         agent_type="llm"
     )
 

@@ -15,8 +15,6 @@ class Agent(ABC):
         self,
         goal: Union[Message, str, Dict],
         observations: Optional[Sequence[Message]] = None,
-        *,
-        max_iterations: int = 10,
     ) -> Message:
         """Run the agent with a goal and optional observations.
         
@@ -32,15 +30,13 @@ class Agent(ABC):
             goal = Message(role="user", parts=[Part(text=goal)])
         elif isinstance(goal, dict):
             goal = Message(**goal)
-        return await self._run(goal, observations, max_iterations=max_iterations)
+        return await self._run(goal, observations)
 
     @abstractmethod
     async def _run(
         self,
         goal: Message,
         observations: Optional[Sequence[Message]],
-        *,
-        max_iterations: int,
     ) -> Message:
         """Internal run method that handles Message type goal.
         
@@ -56,8 +52,14 @@ class Agent(ABC):
 
 class IterativeAgent(Agent):
     """Base class for agents that work iteratively towards a goal."""
-    
     async def _run(
+        self,
+        goal: Message,
+        observations: Optional[Sequence[Message]],
+    ) -> Message:
+        return await self._run_iterative(goal, observations, max_iterations=10)
+
+    async def _run_iterative(
         self,
         goal: Message,
         observations: Optional[Sequence[Message]],
@@ -78,7 +80,7 @@ class IterativeAgent(Agent):
         return observations[-1]  # Return the last result
     
     @abstractmethod
-    async def act(self, goal: Message, observations: List[Message]) -> Message:
+    async def act(self, goal: Message, observations: Sequence[Message]) -> Message:
         """Take an action based on goal and current observations.
         
         Args:
@@ -91,7 +93,7 @@ class IterativeAgent(Agent):
         pass
         
     @abstractmethod
-    async def evaluate(self, goal: Message, observations: List[Message]) -> bool:
+    async def evaluate(self, goal: Message, observations: Sequence[Message]) -> bool:
         """Evaluate if the goal has been achieved.
         
         Args:
