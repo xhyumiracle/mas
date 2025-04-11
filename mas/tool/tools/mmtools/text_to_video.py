@@ -1,10 +1,6 @@
-import openai
-import asyncio
-from typing import Dict, Any, List
+from typing import Dict, Any
 from mas.tool.base import Toolkit
-from openai import AsyncOpenAI
 from dotenv import load_dotenv
-import os
 from mas.tool.tools.mmtools.video_to_file import VideoToFileTool
 import replicate
 
@@ -31,7 +27,10 @@ class TextToVideoTool(Toolkit):
             model,
             input={"prompt": prompt}
         )
-        VideoToFileTool.video_bytes_to_file(output.read(), file_path)
+        try:
+            VideoToFileTool.video_bytes_to_file(output.read(), file_path)
+        except Exception as e:
+            return {"status": "failed", "output_msg": str(e), "output_modality": "video"}
         # with open("output.mp4", "wb") as file:
         #     file.write(output.read())
         # return output
