@@ -171,3 +171,10 @@ pytubefix==8.12.3
 langdetect==1.0.9
 langchain_openai==0.3.1
 browser_use==0.1.40
+python-dotenv==1.0.1
+uvicorn==0.34
+uuid==1.30
+PyJWT[crypto]>=2.10.0
+pydantic_settings==2.6.0
+sqlmodel==0.0.24
+psycopg2-binary==2.9.10
