@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional, Iterator, Type
+from typing import List, Optional, Iterator, Type, AsyncIterator
 from pydantic import BaseModel, ConfigDict
 import networkx as nx
 
@@ -47,9 +47,13 @@ class AgentTaskFlow(BaseModel):
         self.build_agents_on_graph(G)
         self.graph = G
     
-    # TODO: run stream
-    async def run(self):
-        return await self.executor.run(self.graph, self.memory)
+    async def run(self) -> AsyncIterator[Message]:
+        """Execute the flow and yield each step's result."""
+        return self.executor.run(self.graph, self.memory)
+
+    async def run_to_completion(self) -> Message:
+        """Execute the flow and return the final result."""
+        return await self.executor.run_to_completion(self.graph, self.memory)
 
     '''
     for pydantic, resolve AgentTaskGraph compatiblity issue

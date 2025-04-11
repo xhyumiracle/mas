@@ -57,7 +57,7 @@ async def run():
         
         # Execute flow
         print("-----------4.Run Tasks----------")
-        response_message = await flow.run()
+        response_message = await flow.run_to_completion()
         response_message.pprint()
         
         # Save result

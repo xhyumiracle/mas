@@ -53,7 +53,7 @@ class MasFactory:
 
         self.flow.build(agent_task_graph)
 
-        for response in await self.flow.run():
+        async for response in self.flow.run():
             response.pprint()
             latest_response = response
         

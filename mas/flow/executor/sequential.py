@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, AsyncIterator
 from mas.agent.base import Agent
 from mas.flow.executor.base import FlowExecutor
 from mas.memory.flowmemory import FlowMemory
@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 class SequentialExecutor(FlowExecutor):
 
-    async def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> Message:
+    async def run(self, graph: AgentTaskGraph, memory: FlowMemory) -> AsyncIterator[Message]:
+        """Execute the flow step by step, yielding each result."""
         self.sequential_order = list(graph.topological_sort())
 
         '''
@@ -25,14 +26,8 @@ class SequentialExecutor(FlowExecutor):
             agent = graph.nodes[node_id]["agent"]
             prompt = graph.nodes[node_id]["prompt"]
             goal, observations = prep_request(node_id, prompt, shared)
-            # pprint_messages(request)
             response = await exec(node_id, agent, goal, observations, prompt, shared)
-            # response.pprint()
             yield response
-        
-        # return response
-
-    # retry_prompt = "Please adjust your output based on the feedback from the reviewer."
 
 def prep_request(node_id, prompt, shared_memory) -> List[Message]:
     mem: FlowMemory = shared_memory["memory"]

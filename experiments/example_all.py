@@ -93,7 +93,7 @@ async def run():
     )
     flow.build(agent_task_graph)
 
-    for response in await flow.run():
+    async for response in flow.run():
         print(response.content)
         response.pprint()
 

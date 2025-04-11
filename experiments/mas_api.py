@@ -206,7 +206,7 @@ async def event_generator(request: Request, question: str, conversation_id: uuid
         )
         flow.build(agent_task_graph)
 
-        for response in flow.run():
+        async for response in flow.run():
             # content = repr(response["content"])
             content = "test"
             agent_graph_action = {
