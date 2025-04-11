@@ -1,6 +1,6 @@
 import openai
 import asyncio
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from mas.tool.base import Toolkit
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
@@ -14,39 +14,38 @@ class TextToImageTool(Toolkit):
             description="文本转图片的工具包",
             tools=[self.generate_image_by_dalle]
         )
-        
         load_dotenv()
     
     async def generate_image_by_dalle(self, prompt: str) -> Dict[str, Any]:
         """
         通过 OpenAI DALL·E API 生成图像。
         """
-        self.client = AsyncOpenAI(
+        client = AsyncOpenAI(
             api_key=os.getenv('OAI_API_KEY'),
             base_url=os.getenv('OAI_BASE_URL')
         )
         
-        self.max_retries = 5
-        self.base_model = "dall-e-3"
-        self.image_size = "1024x1024"
-        self.image_quality = "standard"
-        self.num_images = 1
+        max_retries = 5
+        base_model = "dall-e-3"
+        image_size = "1024x1024"
+        image_quality = "standard"
+        num_images = 1
 
         retries = 0
-        while retries < self.max_retries:
+        while retries < max_retries:
             try:
-                response = await self.client.images.generate(
-                    model=self.base_model,
+                response = await client.images.generate(
+                    model=base_model,
                     prompt=prompt,
-                    size=self.image_size,
-                    quality=self.image_quality,
-                    n=self.num_images
+                    size=image_size,
+                    quality=image_quality,
+                    n=num_images
                 )
                 image_url = response.data[0].url
                 return {"status": "success", "output_msg": image_url, "output_modality": "image"}
             except Exception as e:
                 retries += 1
-                print(f"{self.base_model} OpenAI API call failed (retry {retries}): {e}")
+                print(f"{base_model} OpenAI API call failed (retry {retries}): {e}")
                 await asyncio.sleep(2 ** retries)
         
         return {"status": "failed", "output_msg": "OpenAI API call failed", "output_modality": "image"}

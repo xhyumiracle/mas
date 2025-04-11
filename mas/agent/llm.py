@@ -38,22 +38,22 @@ class LLMAgent(IterativeAgent):
         self.tool_map = self._create_tool_dict(tools)
         self.system_msg = Message(role="system", parts=[
             Part(text=profile),
-            Part(text=f"""<instruction>
-When referencing any file (including {FILEMAP_PROTOCOL_PREFIX} URIs) in your response, you MUST follow these rules:
+#             Part(text=f"""<instruction>
+# When referencing any file (including {FILEMAP_PROTOCOL_PREFIX} URIs) in your response, you MUST follow these rules:
 
-1. ALWAYS use the exact format: <file>{FILEMAP_PROTOCOL_PREFIX}your_file_uri</file>
-2. NEVER use any other format like markdown image syntax ![text](uri) or direct URIs
-3. The file reference MUST be wrapped in <file> tags
-4. The uri parameter MUST be explicitly specified
-5. This applies to ALL file references, regardless of file type or context
+# 1. ALWAYS use the exact format: <file>{FILEMAP_PROTOCOL_PREFIX}your_file_uri</file>
+# 2. NEVER use any other format like markdown image syntax ![text](uri) or direct URIs
+# 3. The file reference MUST be wrapped in <file> tags
+# 4. The uri parameter MUST be explicitly specified
+# 5. This applies to ALL file references, regardless of file type or context
 
-Example correct usage:
-<file>{FILEMAP_PROTOCOL_PREFIX}_.jpg</file>
+# Example correct usage:
+# <file>{FILEMAP_PROTOCOL_PREFIX}_.jpg</file>
 
-Example incorrect usage (DO NOT USE):
-![Scene 3]({FILEMAP_PROTOCOL_PREFIX}_.jpg)
-{FILEMAP_PROTOCOL_PREFIX}_.jpg
-</instruction>""")])
+# Example incorrect usage (DO NOT USE):
+# ![Scene 3]({FILEMAP_PROTOCOL_PREFIX}_.jpg)
+# {FILEMAP_PROTOCOL_PREFIX}_.jpg
+# </instruction>""")])
 
         try:
             self.tool_definitions = self.model.create_tool_definitions(self._create_wrap_tools(tools))
@@ -116,12 +116,12 @@ Example incorrect usage (DO NOT USE):
         
         messages = observations + [self.system_msg, goal]
 
-        messages = [self._to_filemap_ref_message(msg) for msg in messages]
+        # messages = [self._to_filemap_ref_message(msg) for msg in messages]
         
         result = await self.run_messages(messages)
         
         # convert result message parts to file objects
-        result = self._from_filemap_ref_message(result)
+        # result = self._from_filemap_ref_message(result)
 
         logger.info(" > Result:")
         logger.info(result.format())

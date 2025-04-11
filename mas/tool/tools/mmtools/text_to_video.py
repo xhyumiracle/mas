@@ -5,6 +5,7 @@ from mas.tool.base import Toolkit
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 import os
+from mas.tool.tools.mmtools.video_to_file import VideoToFileTool
 import replicate
 
 class TextToVideoTool(Toolkit):
@@ -19,19 +20,22 @@ class TextToVideoTool(Toolkit):
         load_dotenv()
 
   
-    def generate_video_by_replicate(self, prompt: str) -> Dict[str, Any]:
+    @classmethod
+    def generate_video_by_replicate(cls, prompt: str, file_path: str) -> Dict[str, Any]:
         """
         通过 Replicate 生成视频的工具。
         ref: https://replicate.com/docs/get-started/python
         """
-        self.model = "luma/ray"
+        model = "luma/ray"
         output = replicate.run(
-            self.model,
+            model,
             input={"prompt": prompt}
         )
-        with open("output.mp4", "wb") as file:
-            file.write(output.read())
-        return output
+        VideoToFileTool.video_bytes_to_file(output.read(), file_path)
+        # with open("output.mp4", "wb") as file:
+        #     file.write(output.read())
+        # return output
+        return {"status": "success", "output_msg": file_path, "output_modality": "video"}
 
 text_to_video_tool = TextToVideoTool()
 

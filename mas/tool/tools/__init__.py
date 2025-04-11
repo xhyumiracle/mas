@@ -22,11 +22,11 @@ TOOLS: Dict[str, Union[ToolDefType, ToolSetType]] = {}
 
 TOOLS = (
     TOOLS 
-    | MockTextToTextTool().to_dict()
-    | MockTextToImageTool().to_dict()
-    | MockImagesToVideoTool().to_dict()
-    | MockImagesToAudioTool().to_dict()
-    | MockAddAudioToVideoTool().to_dict()
+    # | MockTextToTextTool().to_dict()
+    # | MockTextToImageTool().to_dict()
+    # | MockImagesToVideoTool().to_dict()
+    # | MockImagesToAudioTool().to_dict()
+    # | MockAddAudioToVideoTool().to_dict()
 
     | YouTubeDownloadTool().to_dict()
     | GoogleSearchTool().to_dict()
@@ -35,7 +35,7 @@ TOOLS = (
     | convert_agno(DuckDuckGoTools())
     | convert_agno(ArxivTools(), new_description="Search arXiv for a query and return the top articles.")
     # | convert_agno(YouTubeTools())
-    | convert_agno(DalleTools(), new_description="Generate an image based on a text prompt.")
+    # | convert_agno(DalleTools(), new_description="Generate an image based on a text prompt.")
     # | convert_agno(WebsiteTools())
     # | convert_agno(FileTools())
 )
